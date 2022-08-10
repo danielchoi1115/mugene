@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.schemas.block import Block
-from app.crud.crud_block import *
+from schemas.block import Block
+from crud.crud_block import *
 router = APIRouter()
 
 # 3

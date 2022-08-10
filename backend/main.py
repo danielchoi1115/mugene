@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter
-from app.api.api_v1 import api
-from app.core.config import settings
+from api_v1 import api
+from core.config import settings
 # 1
 app = FastAPI(
     title="Recipe API", openapi_url="/openapi.json"
