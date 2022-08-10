@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from pydantic import BaseModel
 # from blockRef import BlockRef
-from schemas.dbRef import DBRef
+from app.schemas.dbRef import DBRef
 # from bson import DBRef
 class Block(BaseModel):
     _id: str

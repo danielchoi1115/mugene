@@ -1,5 +1,5 @@
 from app.db.init_db import client
-from schemas.block import Block
+from app.schemas.block import Block
 # from bson.dbref import DBRef
 from bson.objectid import ObjectId
 
