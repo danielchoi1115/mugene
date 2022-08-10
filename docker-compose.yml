@@ -1,5 +1,4 @@
-# docker compose version
-version: "3"
+version: '3.8'
 
 volumes:
   mongo:
@@ -7,16 +6,7 @@ volumes:
   mongoconfig:
     external: true
 
-networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.25.0.0/24
-    
-services: 
-  # name of the services
+services:
   mongodb:
     image: mongo
     # always restart when container is started
@@ -34,19 +24,3 @@ services:
       # -v (directory mount setting)
       - mongo:/data/db
       - mongoconfig:/data/configdb
-    networks:
-      default:
-        ipv4_address: 172.25.0.2
-
-  saeroun-api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    image: python/api:latest
-    container_name: api-container
-    ports:
-      - "5000:5000"
-    networks:
-      default:
-        ipv4_address: 172.25.0.3
-
