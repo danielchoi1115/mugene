@@ -1,7 +1,28 @@
+__pycache__/
+.ssh/
+.local/
+.config/
+.vscode*
+.cache/
+.npm/
+venv/
+non_requirements.txt
+.wget-hsts
+.bash_history
+.Xauthority
+.gitconfig
+docker-compose.yml
+config.py
+.sudo_as_admin*
+package.json
+package-lock.json
+.vuerc
+.vim*
+.lesshst
+
 .DS_Store
 node_modules
 /dist
-
 
 # local env files
 .env.local
@@ -21,3 +42,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+activate.sh
