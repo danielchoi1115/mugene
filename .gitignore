@@ -43,3 +43,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 activate.sh
+backend/app/db/init_client.py
