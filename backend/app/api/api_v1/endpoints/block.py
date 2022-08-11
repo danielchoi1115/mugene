@@ -1,13 +1,21 @@
 from fastapi import APIRouter
-from app.schemas.block import Block
-from app.crud.crud_block import *
+from app.schemas.block import BlockCreate
+from app.crud.crud_block import CRUDBlock
 router = APIRouter()
 
-# 3
+
+@router.get("/{blockId}", status_code=202)
+def getBlock(blockId: str, start: int = 0, end: int = 0) -> dict:
+    # validateStorage()
+    # validateBlock()
+    return CRUDBlock.read_many(blockId, start, end)
+
+
 @router.post("/", status_code=202)
-def createBlock(block: Block) -> dict:
+def makeBlock(block: BlockCreate) -> dict:
     """
     Post Block
     """
-    
-    return insertBlock(block)
+    # validateStorage()
+    # validateBlock()
+    return CRUDBlock.create(block)
