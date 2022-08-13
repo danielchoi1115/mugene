@@ -1,7 +1,7 @@
 from typing import Any
 from pydantic import BaseModel, Field
 from app.schemas.pyobjectid import PyObjectId
-from app.db.db_config import (userdb_config, blockdb_config, workdb_config)
+from app.db.db_names import (userdb_config, blockdb_config, workdb_config)
 from bson.son import SON
 from bson.dbref import DBRef as bsonDBRef
 
