@@ -1,25 +1,31 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 from pydantic import BaseModel, EmailStr, Field
-from app.schemas.dbref import RefUser
 
 
-class UserBase(BaseModel):
-    # id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    first_name: Optional[str] = Field(alias='FN')
+class UserEmail(BaseModel):
+    email: EmailStr
+
+
+class UserBase(UserEmail):
+    first_name: Optional[str]
     last_name: Optional[str]
     birthday: Optional[datetime]
     is_superuser: bool = False
-    sampleId: RefUser
-    sma: List[RefUser]
-    email: Optional[EmailStr] = None
 
 
 class UserPost(UserBase):
-    email: EmailStr
     passwordHash: str
 
 
-# class UserCreate(UserBase):
-#     sampleId: DBRef
-#     sma: List[DBRef]
+class UserResponseBase(BaseModel):
+    result: bool
+
+
+class UserResponse(UserResponseBase):
+    user_id: str = Field(alias='_id')
+
+
+class UserResponseError(UserResponseBase):
+    result: bool = False
+    exception: str
