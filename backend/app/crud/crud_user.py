@@ -1,8 +1,10 @@
+from app.crud.projections.user import UserProjection
 from app.db.init_client import client
-from app.schemas.user import UserPost, UserEmail, UserResponse, UserResponseError
-from fastapi.encoders import jsonable_encoder
+from app.schemas.user import User, UserCreate, UserInDB, UserResponse, UserResponseError
+from app.core.security import get_password_hash
 import json
 from bson import json_util
+from pydantic import EmailStr
 
 
 def parse_json(data):
@@ -10,7 +12,7 @@ def parse_json(data):
 
 
 class CRUDUser():
-    def create(self, user: UserPost) -> UserResponse | UserResponseError:
+    def create(self, user_in: UserCreate) -> UserResponse | UserResponseError:
         insert_result = False
         try:
             # data = jsonable_encoder(user)
@@ -18,8 +20,14 @@ class CRUDUser():
             #     'name': "haha",
             #     'ref': [DBRef('user', id=PyObjectId("62f5224267a50432a59508f9"))]
             # }
+            create_data = user_in.dict()
+            password = create_data.pop("password")
+            user_in_db = UserInDB(**create_data,
+                                  hashed_password=get_password_hash(password)
+                                  )
+
             res = client['user_db']['users'].insert_one(
-                user.dict(by_alias=True)
+                user_in_db.dict()
             )
             insert_result = res.acknowledged
 
@@ -33,10 +41,17 @@ class CRUDUser():
                 exception=str(ex)
             )
 
-    def get_by_email(self, user: UserEmail) -> dict:
-        return client['user_db']['users'].find_one(
-            user.dict()
+    def get_by_email(self, email: EmailStr, projection: UserProjection = None) -> UserInDB:
+        # if projection is None:
+        #     projection = UserProjection()
+        res = client['user_db']['users'].find_one(
+            filter={"email": email},
+            # projection=projection.dict()
         )
+        return UserInDB(**res)
+
+    def login_user():
+        pass
 
 
 user = CRUDUser()
