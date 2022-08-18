@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from app import crud
-
+from app.db.init_client import client
 from app.core.auth import oauth2_scheme
 from app.core.config import settings
 from app.crud.projections.user import UserFullProjection
@@ -16,12 +16,12 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 
-# def get_session() -> Generator:
-#     session = client.start_session()
-#     try:
-#         yield session
-#     finally:
-#         session.end_session()
+def get_session() -> Generator:
+    session = client.start_session()
+    try:
+        yield session
+    finally:
+        session.end_session()
 
 
 async def get_current_user(
@@ -43,10 +43,7 @@ async def get_current_user(
     except JWTError:
         raise CredentialException
 
-    user = crud.user.get_by_email(
-        email=username,
-        projection=UserFullProjection
-    )
+    user = crud.user.get_by_email(username)
 
     if user is None:
         raise CredentialException
