@@ -1,16 +1,11 @@
-
-from fastapi import HTTPException, status
-
-
-class BadRequestException(HTTPException):
-    status_code = status.HTTP_400_BAD_REQUEST
+from . import base
 
 
-class UserExistException(BadRequestException):
+class UserExistException(base.BadRequestException):
     def __init__(self) -> None:
         self.detail = "The user with this email already exists in the system"
 
 
-class IncorrectLoginException(BadRequestException):
+class IncorrectLoginException(base.BadRequestException):
     def __init__(self) -> None:
         self.detail = "Incorrect username or password"
