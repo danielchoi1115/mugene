@@ -1,26 +1,48 @@
+from app import exceptions
 from app.db.init_client import client
-from app.schemas.block import BlockCreate
+from app.schemas.block import BlockCreate, BlockParent
 from bson import json_util
 import json
 # from bson.dbref import DBRef
 from bson.objectid import ObjectId
-
+from pymongo.client_session import ClientSession
 import json
 from bson import ObjectId
 
+from app import schemas
+
 
 class CRUDBlock():
-    def create(block: BlockCreate):
+    def create(
+        self,
+        storage_id: str,
+        block_in_db: BlockCreate,
+        session: ClientSession
+    ) -> schemas.InsertResponse:
+        insert_result = False
+        collection = client['storage_db'][storage_id]
+        if block_in_db.parent_folder is not None:
+            res = collection.find_one(block_in_db.parent_folder.refid)
+            if not res:
+                raise exceptions.NoParentFolderException
         try:
-            if block.parentFolder is not None:
-                block.parentFolder = block.parentFolder.as_doc()
-            res = client['storage_db']['62f3d5e306d48ff2df0dc4fa'].insert_one(
-                block.dict()
+            session.start_transaction()
+            res = collection.insert_one(
+                block_in_db.dict(by_alias=True)
+            )
+            session.commit_transaction()
+            insert_result = res.acknowledged
+
+            return schemas.InsertResponse(
+                result=insert_result,
+                _id=str(res.inserted_id)
             )
         except Exception as ex:
-            print(ex)
-            print(block)
-        return {"insertResult": res.acknowledged}
+            session.abort_transaction()
+            raise schemas.InsertResponseError(
+                result=insert_result,
+                exception=str(ex)
+            )
 
     def read_many(blockId: str, start: int = 0, end: int = 0, projection: dict = None):
         res = client['storage_db']['62f3d5e306d48ff2df0dc4fa'].find_one(
@@ -33,18 +55,7 @@ class CRUDBlock():
         res2 = client['storage_db']['62f3d5e306d48ff2df0dc4fa'].find(
             {}, limit=end-start+1, skip=start, projection={"_id": 1, "name": 1}
         )
-        return parse_json(res2)
-
-
-def parse_json(data):
-    return json.loads(json_util.dumps(data))
-
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
+        return res
 
 
 block = CRUDBlock()
