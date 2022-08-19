@@ -1,9 +1,11 @@
 
+from typing import Literal
 from pydantic import BaseModel
 from app.schemas.dbref import RefUser
 from app.schemas.permission import Permission
 
 
 class Member(BaseModel):
-    user: RefUser
+    user_ref: RefUser
+    user_type: Literal["owner", "guest"]
     permission: Permission
