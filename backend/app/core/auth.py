@@ -18,7 +18,6 @@ JWTPayloadMapping = MutableMapping[
 ]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/user/token")
-print(oauth2_scheme)
 
 
 def authenticate(
@@ -26,10 +25,10 @@ def authenticate(
     email: EmailStr,
     password: str
 ) -> Optional[UserInDB]:
-    user = crud.user.get_by_email(email, UserAuthProjection())
+    user = crud.user.get_hashed_password(email)
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):  # 1
+    if not verify_password(password, user.hashed_password):
         return None
     return user
 
@@ -40,7 +39,12 @@ def create_access_token(*, sub: str) -> str:  # 2
         lifetime=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),  # 3
         sub=sub,
     )
-
+def create_refresh_token(*, sub: str) -> str:  # 2
+    return _create_token(
+        token_type="refresh_token",
+        lifetime=timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),  # 3
+        sub=sub,
+    )
 
 def _create_token(
     token_type: str,
