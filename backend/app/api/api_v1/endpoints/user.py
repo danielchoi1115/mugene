@@ -1,36 +1,24 @@
 
 from typing import List
-from fastapi import APIRouter, Depends
-from app.schemas.user import UserResponse, UserCreate, UserResponseError
+from fastapi import APIRouter, Depends, status
+from app.schemas.user import UserCreate
+from app import schemas
 from app import exceptions
 from app import crud
-from app import core
 from app import schemas
 from app.api import deps
-from fastapi.security import OAuth2PasswordRequestForm
-
-from app.core.auth import create_access_token
-
 router = APIRouter()
 
 # 3
 
 
-@router.get("/", status_code=200)
-def get_user() -> dict:
-    """
-    Root Get
-    """
-    return {"msg": "Hello, World!"}
-
-
-@router.post("/new", status_code=202, response_model=UserResponse | UserResponseError)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.InsertResponse | schemas.InsertResponseError)
 def signup_user(user_posted: UserCreate) -> dict:
     """
     Root Get
     """
 
-    user = crud.user.get_by_email(email=user_posted.email)
+    user = crud.user.get_by_email(user_posted.email)
     if user:
         raise exceptions.user.UserExistException()
 
@@ -47,18 +35,3 @@ def read_users_me(current_user: schemas.User = Depends(deps.get_current_user)):
 
     user = current_user
     return user
-
-
-@router.post("/token", status_code=202)
-def get_user_token(form_data: OAuth2PasswordRequestForm = Depends()) -> dict:
-    """
-    Root Get
-    """
-    user = core.auth.authenticate(email=form_data.username, password=form_data.password)  # 2
-    if not user:
-        raise exceptions.user.IncorrectLoginException  # 3
-
-    return {
-        "access_token": create_access_token(sub=user.email),  # 4
-        "token_type": "bearer",
-    }
