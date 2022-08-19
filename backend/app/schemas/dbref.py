@@ -23,7 +23,7 @@ class RefBlock(DBRefBase):
     db: str = Field(blockdb_config.DB, alias="$db")
 
 
-class RefWorkSpace(DBRefBase):
+class RefWorkspace(DBRefBase):
     ref: str = Field(workdb_config.COLLECTION, alias="$ref")
     db: str = Field(workdb_config.DB, alias="$db")
 # class DBRef(bsonDBRef):

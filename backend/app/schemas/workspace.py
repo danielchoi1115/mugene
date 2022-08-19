@@ -1,20 +1,21 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conlist
 from app.schemas.member import Member
 
 
-class WorkSpace(BaseModel):
+class WorkspaceBase(BaseModel):
     workspace_name: str
 
 
-class WorkSpacePost(WorkSpace):
-    members: Optional[List[Member]] = []
-    creationDate: datetime
-    createdBy: Member
+class WorkspaceCreate(WorkspaceBase):
+    created_by: Member
+    members: List[Member]
 
 
-class WorkSpaceCreate(WorkSpacePost):
-    owner: Member = None
+class WorkspaceInDB(WorkspaceCreate):
+    creation_date: datetime
 
-    
+
+class Workspace(WorkspaceInDB):
+    ...
