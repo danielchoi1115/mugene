@@ -3,4 +3,4 @@ from pydantic import BaseModel
 
 
 class Permission(BaseModel):
-    type: Literal["full", "read", "modify", "read-write"]
+    type: Literal["full", "read", "modify", "read-write", "delete"]
