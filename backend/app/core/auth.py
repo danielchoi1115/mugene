@@ -17,7 +17,7 @@ JWTPayloadMapping = MutableMapping[
     str, Union[datetime, bool, str, List[str], List[int]]
 ]
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/user/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth")
 
 
 def authenticate(
@@ -39,12 +39,15 @@ def create_access_token(*, sub: str) -> str:  # 2
         lifetime=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),  # 3
         sub=sub,
     )
+
+
 def create_refresh_token(*, sub: str) -> str:  # 2
     return _create_token(
         token_type="refresh_token",
         lifetime=timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),  # 3
         sub=sub,
     )
+
 
 def _create_token(
     token_type: str,
