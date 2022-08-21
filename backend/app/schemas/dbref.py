@@ -7,10 +7,26 @@ from bson.dbref import DBRef as bsonDBRef
 
 
 class DBRefBase(BaseModel):
-    refid: PyObjectId = Field(default_factory=PyObjectId, alias="$id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="$id")
+    collection: str = Field('', alias="$ref")
+    database: str = Field('', alias="$db")
 
     class Config:
         allow_population_by_field_name = True
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if type(v) == bsonDBRef:
+            v = DBRefBase(**v.as_doc())
+        return v
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
 
 
 class RefUser(DBRefBase):

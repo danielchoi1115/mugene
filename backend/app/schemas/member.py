@@ -1,11 +1,27 @@
 
 from typing import Literal
 from pydantic import BaseModel
-from app.schemas.dbref import RefUser
+from app.schemas.dbref import DBRefBase, RefUser
 from app.schemas.permission import Permission
+
+from bson.dbref import DBRef
 
 
 class Member(BaseModel):
     user_ref: RefUser
-    user_type: Literal["owner", "guest"]
-    permission: Permission
+    user_type: Literal["owner", "guest"] = "owner"
+    permission: Permission = Permission(type="full")
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if type(v) == dict:
+            v = Member(**v)
+        return v
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
