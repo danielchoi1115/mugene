@@ -10,6 +10,7 @@ from app.core.config import settings
 from app.crud.projections.user import UserFullProjection
 from app.exceptions import CredentialException
 from app.schemas.user import User
+from app.schemas.workspace import Workspace
 
 
 class TokenData(BaseModel):
@@ -48,3 +49,24 @@ async def get_current_user(
     if user is None:
         raise CredentialException
     return user
+
+
+async def get_current_workspace(
+    token: str = Depends(oauth2_scheme)
+) -> Workspace:
+    try:
+        payload = jwt.decode(
+            token,
+            settings.JWT_SECRET,
+            algorithms=[settings.ALGORITHM],
+            options={"verify_aud": False},
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            raise CredentialException
+        token_data = TokenData(username=username)
+
+    except JWTError:
+        raise CredentialException
+
+    return '62fcde721fe142b18a02b46b'
