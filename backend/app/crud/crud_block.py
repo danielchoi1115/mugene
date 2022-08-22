@@ -47,9 +47,19 @@ class CRUDBlock():
                 exception=str(ex)
             )
 
-    def read_many(self, workspace_id: str, parent_id: PyObjectId = None, start: int = 0, end: int = 0) -> Block:
+    def read_many(
+        self,
+        workspace_id: str,
+        parent_id: PyObjectId = None,
+        find_by_parents: bool = True,
+        start: int = 0,
+        end: int = 0
+    ) -> List[Block]:
+        filter_ = {}
+        if find_by_parents:
+            filter_ = {"parent_folder.$id": parent_id}
         res = client['storage_db'][workspace_id].find(
-            {"parent_folder.$id": parent_id}
+            filter=filter_
         )
         if end - start > 10:
             end = start + 9
@@ -58,11 +68,11 @@ class CRUDBlock():
         # res2 = client['storage_db']['62f3d5e306d48ff2df0dc4fa'].find(
         #     {}, limit=end-start+1, skip=start, projection={"_id": 1, "name": 1}
         # )
-        read_result: List[Block] = []
-        for i in res:
-            read_result.append(Block(**i))
-
-        return [block.dict() for block in read_result]
+        read_result: List[Block] = [
+            Block(**i) for i in res
+        ]
+        # return [block.dict() for block in read_result]
+        return read_result
 
 
 block = CRUDBlock()
