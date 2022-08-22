@@ -1,7 +1,8 @@
 
 from typing import List
 from fastapi import APIRouter, Depends, status
-from app.schemas.user import UserCreate
+from app.schemas.response import InsertResponse, InsertResponseError
+from app.schemas.user import UserIn
 from app import schemas
 from app import exceptions
 from app import crud
@@ -13,7 +14,7 @@ router = APIRouter()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.InsertResponse | schemas.InsertResponseError)
-def signup_user(user_posted: UserCreate) -> dict:
+def signup_user(user_posted: UserIn) -> (InsertResponse | InsertResponseError):
     """
     Root Get
     """
