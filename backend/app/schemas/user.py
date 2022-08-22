@@ -7,25 +7,19 @@ class UserBase(BaseModel):
     email: EmailStr
     first_name: Optional[str]
     last_name: Optional[str]
-    birthday: Optional[datetime]
     is_superuser: bool = False
+    organization: str
 
 
-class UserCreate(UserBase):
+class UserIn(UserBase):
     password: str
 
 
-class UserInDBBase(UserBase):
-    class Config:
-        orm_mode = True
-
-# Additional properties stored in DB but not returned by API
-
-
-class UserInDB(UserInDBBase):
+class UserInDB(UserBase):
+    creation_date: datetime
     hashed_password: str
 
 
 # Additional properties to return via API
-class User(UserInDBBase):
+class User(UserInDB):
     ...

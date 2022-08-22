@@ -1,6 +1,7 @@
+from datetime import datetime
 from app.crud.projections.user import UserAuthProjection, UserProjection
 from app.db.init_client import client
-from app.schemas.user import User, UserCreate, UserInDB
+from app.schemas.user import User, UserIn, UserInDB
 from app import schemas
 from app.core.security import get_password_hash
 import json
@@ -14,7 +15,7 @@ def parse_json(data):
 
 
 class CRUDUser():
-    def create(self, user_in: UserCreate) -> schemas.InsertResponse | schemas.InsertResponseError:
+    def create(self, user_in: UserIn) -> schemas.InsertResponse | schemas.InsertResponseError:
         insert_result = False
         try:
             # data = jsonable_encoder(user)
@@ -24,9 +25,11 @@ class CRUDUser():
             # }
             create_data = user_in.dict(by_alias=True)
             password = create_data.pop("password")
-            user_in_db = UserInDB(**create_data,
-                                  hashed_password=get_password_hash(password)
-                                  )
+            user_in_db = UserInDB(
+                **create_data,
+                creation_date=datetime.utcnow(),
+                hashed_password=get_password_hash(password)
+            )
 
             res = client['user_db']['users'].insert_one(
                 user_in_db.dict(by_alias=True)
@@ -43,7 +46,7 @@ class CRUDUser():
                 exception=str(ex)
             )
 
-    def get_by_email(self, email: EmailStr) -> User:
+    def get_by_email(self, email: EmailStr) -> User | None:
         # if projection is None:
         #     projection = UserProjection()
         try:
@@ -51,6 +54,8 @@ class CRUDUser():
                 filter={"email": email},
                 # projection=projection.dict()
             )
+            if res is None:
+                return None
             return User(**res)
         except Exception as e:
             raise
