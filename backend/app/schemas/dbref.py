@@ -13,35 +13,51 @@ class DBRefBase(BaseModel):
 
     class Config:
         allow_population_by_field_name = True
-
+        
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if type(v) == bsonDBRef:
-            v = DBRefBase(**v.as_doc())
-        return v
-
+        
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
 
 
 class RefUser(DBRefBase):
-    ref: str = Field(userdb_config.COLLECTION, alias="$ref")
-    db: str = Field(userdb_config.DB, alias="$db")
+    collection: str = Field(userdb_config.COLLECTION, alias="$ref")
+    database: str = Field(userdb_config.DB, alias="$db")
 
+    @classmethod
+    def validate(cls, v):
+        if type(v) == bsonDBRef:
+            v = RefUser(**v.as_doc())
+        elif type(v) == str:
+            v = RefUser(id=v)
+        return v
 
 class RefBlock(DBRefBase):
-    ref: str = Field(blockdb_config.COLLECTION, alias="$ref")
-    db: str = Field(blockdb_config.DB, alias="$db")
+    collection: str = Field(blockdb_config.COLLECTION, alias="$ref")
+    database: str = Field(blockdb_config.DB, alias="$db")
 
-
+    @classmethod
+    def validate(cls, v):
+        if type(v) == bsonDBRef:
+            v = RefBlock(**v.as_doc())
+        elif type(v) == str:
+            v = RefBlock(id=v)
+        return v
+    
 class RefWorkspace(DBRefBase):
-    ref: str = Field(workdb_config.COLLECTION, alias="$ref")
-    db: str = Field(workdb_config.DB, alias="$db")
+    collection: str = Field(workdb_config.COLLECTION, alias="$ref")
+    database: str = Field(workdb_config.DB, alias="$db")
+    @classmethod
+    def validate(cls, v):
+        if type(v) == bsonDBRef:
+            v = RefWorkspace(**v.as_doc())
+        elif type(v) == str:
+            v = RefWorkspace(id=v)
+        return v
+    
 # class DBRef(bsonDBRef):
 #     @classmethod
 #     def __get_validators__(cls):
