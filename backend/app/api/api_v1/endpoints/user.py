@@ -28,8 +28,10 @@ def signup_user(user_posted: UserIn) -> (InsertResponse | InsertResponseError):
     return user
 
 
-@router.get("/me", response_model=schemas.User)
-def read_users_me(current_user: schemas.User = Depends(deps.get_current_user)):
+@router.get("/me", response_model=schemas.UserOut)
+def read_users_me(
+    current_user: schemas.User = Depends(deps.get_current_user)
+):
     """
     Fetch the current logged in user.
     """

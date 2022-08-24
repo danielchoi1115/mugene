@@ -1,12 +1,14 @@
 from datetime import datetime
 from app.crud.projections.user import UserAuthProjection, UserProjection
 from app.db.init_client import client
+from app.schemas.pyobjectid import PyObjectId
 from app.schemas.user import User, UserIn, UserInDB
 from app import schemas
 from app.core.security import get_password_hash
 import json
 from bson import json_util
 from pydantic import EmailStr
+from pydantic.error_wrappers import ValidationError
 from pymongo.client_session import ClientSession
 
 
@@ -45,32 +47,31 @@ class CRUDUser():
                 result=insert_result,
                 exception=str(ex)
             )
-
-    def get_by_email(self, email: EmailStr) -> User | None:
-        # if projection is None:
-        #     projection = UserProjection()
+    def read(self, filter, collection) -> User | None:
         try:
-            res = client['user_db']['users'].find_one(
-                filter={"email": email},
-                # projection=projection.dict()
+            res = client['user_db'][collection].find_one(
+                filter=filter
             )
             if res is None:
                 return None
             return User(**res)
+        except ValidationError:
+            return None
         except Exception as e:
             raise
-
-    def get_hashed_password(self, email: EmailStr) -> UserInDB:
-        # if projection is None:
-        #     projection = UserProjection()
-        try:
-            res = client['user_db']['users'].find_one(
-                filter={"email": email}
-            )
-            return UserInDB(**res)
-        except Exception as e:
-            raise
-
+    
+    def get_by_id(self, id: str, collection='users') -> User | None:
+        return self.read(
+            filter={"_id": PyObjectId(id)},
+            collection=collection
+        )
+        
+    def get_by_email(self, email: EmailStr, collection='users') -> User | None:
+        return self.read(
+            filter={"email": email},
+            collection=collection
+        )
+        
     def login_user():
         pass
 
