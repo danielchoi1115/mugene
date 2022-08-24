@@ -1,6 +1,9 @@
 
+from typing import List
 from app import schemas
 from app.db.init_client import client
+from app.schemas.member import Member
+from app.schemas.pyobjectid import PyObjectId
 from app.schemas.workspace import WorkspaceInDB
 from pymongo.client_session import ClientSession
 
@@ -26,6 +29,41 @@ class CRUDWorkspace():
                 result=insert_result,
                 exception=str(ex)
             )
+            
+    def update(self, filter, update_map, session: ClientSession, upsert=True) -> schemas.UpdateResponse:
+        try:
+            session.start_transaction()
+            res = client['workspace_db']['workspaces'].update_one(
+                filter=filter,
+                update=update_map,
+                upsert=upsert
+            )
 
+            session.commit_transaction()
+            insert_result = res
+            return None
+        except Exception as ex:
+            session.abort_transaction()
+            raise
+
+    def add_members(
+        self, 
+        workspace_id: PyObjectId, 
+        members: List[Member], 
+        session: ClientSession
+    ):
+        return self.update(
+            filter={'_id': workspace_id},
+            update_map={
+                '$push': {
+                    "members": {
+                        "$each": [m.dict(by_alias=True) for m in members]
+                    }
+                },
+                "upsert":"True"
+            },
+            session=session
+        )
+        
 
 workspace = CRUDWorkspace()
