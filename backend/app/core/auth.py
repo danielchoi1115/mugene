@@ -11,7 +11,7 @@ from app import crud
 from pydantic import EmailStr
 
 from app.crud.projections.user import UserAuthProjection
-from app.schemas.user import UserInDB
+from app import schemas
 
 JWTPayloadMapping = MutableMapping[
     str, Union[datetime, bool, str, List[str], List[int]]
@@ -24,8 +24,8 @@ def authenticate(
     *,
     email: EmailStr,
     password: str
-) -> Optional[UserInDB]:
-    user = crud.user.get_hashed_password(email)
+) -> Optional[schemas.UserInDB]:
+    user = crud.user.get_by_email(email)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
