@@ -2,35 +2,40 @@
 from typing import List
 from fastapi import APIRouter, Depends, status
 from app.schemas.response import InsertResponse, InsertResponseError
-from app.schemas.user import UserIn
+from app.schemas.user import UserCreate
 from app import schemas
 from app import exceptions
 from app import crud
 from app import schemas
+from app import models
 from app.api import deps
+from sqlalchemy.orm import Session
 router = APIRouter()
 
 # 3
 
-
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.InsertResponse | schemas.InsertResponseError)
-def signup_user(user_posted: UserIn) -> (InsertResponse | InsertResponseError):
+# response_model=schemas.InsertResponse | schemas.InsertResponseError
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+def signup_user(
+    user_in: UserCreate, 
+    db: Session = Depends(deps.get_db)
+) -> models.User:
     """
     Root Get
     """
 
-    user = crud.user.get_by_email(user_posted.email)
+    user = crud.user.get_by_email(db=db, email=user_in.email)
     if user:
         raise exceptions.user.UserExistException()
 
-    user = crud.user.create(user_posted)
+    user = crud.user.create(db=db, obj_in=user_in)
 
     return user
 
 
 @router.get("/me", response_model=schemas.UserOut)
 def read_users_me(
-    current_user: schemas.User = Depends(deps.get_current_user)
+    current_user: models.User = Depends(deps.get_current_user)
 ):
     """
     Fetch the current logged in user.

@@ -7,8 +7,10 @@ from pymongo.client_session import ClientSession
 from app.api import deps
 from app.schemas.member import Member
 from app.schemas.pyobjectid import PyObjectId
-from app.schemas.workspace import WorkspaceIn, WorkspaceInDB
+from app.schemas.workspace import WorkspaceCreate
+from sqlalchemy.orm import Session
 from app.crud.crud_workspace import CRUDWorkspace
+from app import models
 router = APIRouter()
 
 # 3
@@ -22,42 +24,24 @@ def get_workspace() -> dict:
     return {"msg": "Hello, World!"}
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.WorkspaceOut)
 def create_workspace(
-    workspace_in: WorkspaceIn,
-    session: ClientSession = Depends(deps.get_session)
-) -> schemas.InsertResponse:
+    workspace_in: WorkspaceCreate,
+    db: Session = Depends(deps.get_db),
+    user_in: models.User = Depends(deps.get_current_user)
+) -> models.User:
     """
     Root Get
     """
-    # user.sampleId = RefUser(refid=user.sampleId.refid)
-    # user.sma = [RefUser(refid=ref.refid) for ref in user.sma]
+    user = crud.workspace.create(db=db, user_in=user_in, obj_in=workspace_in)
 
-    # if not workspace_in.members:
-    
-    user = crud.user.get_by_id(workspace_in.created_by.user_ref.id)
-    if not user:
-        raise exceptions.NoUserFoundException
-    
-    if workspace_in.created_by not in workspace_in.members:
-        workspace_in.members.append(workspace_in.created_by)
-        
-    data = WorkspaceInDB(
-        **workspace_in.dict(by_alias=True),
-        creation_date=datetime.utcnow()
-    )
-
-    insertResert = crud.workspace.create(
-        workspace_in_db=data,
-        session=session
-    )
-    return insertResert
+    return user
 
 @router.put("/members", status_code=status.HTTP_200_OK)
 def update_members(
     workspace_id: PyObjectId,
     members: List[Member],
-    session: ClientSession = Depends(deps.get_session)
+    session: ClientSession = Depends(deps.get_db)
 ) -> schemas.UpdateResponse:
     
     update_result = crud.workspace.add_members(
@@ -68,8 +52,8 @@ def update_members(
     return update_result
     
 @router.put("/members/{memberId}", status_code=status.HTTP_201_CREATED)
-def create_workspace(
-    list: WorkspaceIn,
-    session: ClientSession = Depends(deps.get_session)
+def create_workspac(
+    list: WorkspaceCreate,
+    session: ClientSession = Depends(deps.get_db)
 ) -> schemas.UpdateResponse:
     ... 
