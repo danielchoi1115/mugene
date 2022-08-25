@@ -1,15 +1,13 @@
+from datetime import datetime
+import os
 from typing import List
 from app import exceptions
 from app.db.init_client import client
-from app.schemas.block import Block, BlockInDB, BlockParent
-from bson import json_util
-import json
-# from bson.dbref import DBRef
-from bson.objectid import ObjectId
-from pymongo.client_session import ClientSession
-import json
-from bson import ObjectId
+from app.schemas.block import Block
+from fastapi import UploadFile
+from sqlalchemy.orm import Session
 
+from app import models
 from app import schemas
 from app.schemas.pyobjectid import PyObjectId
 
@@ -17,35 +15,39 @@ from app.schemas.pyobjectid import PyObjectId
 class CRUDBlock():
     async def create(
         self,
-        storage_id: str,
-        block_in_db: BlockInDB,
-        session: ClientSession
-    ) -> schemas.InsertResponse:
-        insert_result = False
-        collection = client['storage_db'][storage_id]
-        if block_in_db.parent_folder is not None:
-            res = collection.find_one(block_in_db.parent_folder.refid)
-            if not res:
-                raise exceptions.NoParentFolderException
+        workspace_id: int,
+        block_in: schemas.BlockCreate,
+        file: UploadFile,
+        db: Session,
+        user_in: models.User,
+    ) -> models.Block:
+        
+        file_type = 'directory'
+        file_url = None
+        size = None
 
-        try:
-            session.start_transaction()
-            res = collection.insert_one(
-                block_in_db.dict(by_alias=True)
-            )
-            session.commit_transaction()
-            insert_result = res.acknowledged
+        if file:
+            content = await file.read()
+            size = len(content)
+            filename, file_type = os.path.splitext(file.filename)
+            file_url = filename
 
-            return schemas.InsertResponse(
-                result=insert_result,
-                _id=str(res.inserted_id)
-            )
-        except Exception as ex:
-            session.abort_transaction()
-            raise schemas.InsertResponseError(
-                result=insert_result,
-                exception=str(ex)
-            )
+        db_obj = models.Block(
+            block_name=block_in.block_name,
+            workspace_id=workspace_id,
+            is_folder=block_in.is_folder,
+            creation_date=datetime.utcnow(),
+            created_by=user_in.user_id,
+            file_type=file_type,
+            file_url=file_url,
+            size=size,
+            parent_folder=block_in.parent_folder_id,
+        )
+        
+        db.add(db_obj)
+        db.commit()
+
+        return db_obj
 
     def read_many(
         self,

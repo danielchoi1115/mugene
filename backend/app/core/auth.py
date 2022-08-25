@@ -7,12 +7,12 @@ from jose import jwt
 from app.core.config import settings
 from app.core.security import verify_password
 from app import crud
-
+from app import models
 from pydantic import EmailStr
 
 from app.crud.projections.user import UserAuthProjection
 from app import schemas
-
+from sqlalchemy.orm import Session
 JWTPayloadMapping = MutableMapping[
     str, Union[datetime, bool, str, List[str], List[int]]
 ]
@@ -22,10 +22,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth")
 
 def authenticate(
     *,
+    db: Session,
     email: EmailStr,
     password: str
 ) -> Optional[schemas.UserInDB]:
-    user = crud.user.get_by_email(email)
+    user: models.User = crud.user.get_by_email(db=db, email=email)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
