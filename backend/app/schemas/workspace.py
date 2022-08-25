@@ -7,15 +7,16 @@ from app.schemas.member import Member
 class WorkspaceBase(BaseModel):
     workspace_name: str
 
-
 class WorkspaceCreate(WorkspaceBase):
-    created_by: Member
-    members: List[Member]
+    ...
+    
+class WorkspaceUpdate(WorkspaceBase):
+    ...
 
-
-class WorkspaceInDB(WorkspaceCreate):
-    creation_date: datetime
-
-
-class Workspace(WorkspaceInDB):
+class WorkspaceInDB(WorkspaceBase):
+    workspace_id: Optional[int] = None
+    class Config:
+        orm_mode = True
+        
+class WorkspaceOut(WorkspaceInDB):
     ...

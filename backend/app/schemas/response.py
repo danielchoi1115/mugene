@@ -12,3 +12,9 @@ class InsertResponse(InsertResponseBase):
 class InsertResponseError(InsertResponseBase):
     result: bool = False
     exception: str
+
+class UpdateResponseBase(BaseModel):
+    result: bool
+
+class UpdateResponse(UpdateResponseBase):
+    ...

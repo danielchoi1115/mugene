@@ -5,22 +5,26 @@ from pydantic import BaseModel, EmailStr, Field
 AccountTypes = Literal["guest", "admin"]
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: Optional[EmailStr] = None
     first_name: Optional[str]
     last_name: Optional[str]
-    account_level: Literal[0,1,2,10]
     organization_code: str
+    account_level: Literal[0,1,2,10]
 
-class UserIn(UserBase):
+class UserCreate(UserBase):
+    email: EmailStr
     password: str
-
+    
+class UserUpdate(UserBase):
+    ...
 
 class UserInDB(UserBase):
-    creation_date: datetime
-    hashed_password: str
+    user_id: Optional[int] = None
+    hashed_password: str = None
+    
+    class Config:
+        orm_mode = True
 
-class User(UserInDB):
-    ...
     
 class UserOut(UserInDB):
     class Config:
