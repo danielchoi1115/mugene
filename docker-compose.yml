@@ -1,26 +1,26 @@
 version: '3.8'
 
 volumes:
-  mongo:
-    external: true
-  mongoconfig:
+  mariadb:
     external: true
 
 services:
-  mongodb:
-    image: mongo
+  mariadb:
+    image: mariadb
     # always restart when container is started
     restart: always
     # container name
-    container_name: mongo-container
+    container_name: mariadb-container
     # set port (from:to)
     ports:
-      - "27017:27017"
+      - "3306:3306"
     environment: 
       # MongoDB Username and password
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: Tmd3752fuf!@
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
     volumes:
       # -v (directory mount setting)
-      - mongo:/data/db
-      - mongoconfig:/data/configdb
+      - mariadb:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
