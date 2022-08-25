@@ -9,25 +9,32 @@ from app.core.auth import oauth2_scheme
 from app.core.config import settings
 from app.crud.projections.user import UserFullProjection
 from app.exceptions import CredentialException
-from app.schemas.user import User
-from app.schemas.workspace import Workspace
-
+from app import models
+from app.db import session
+from sqlalchemy.orm import Session
 
 class TokenData(BaseModel):
     username: Optional[str] = None
 
 
-def get_session() -> Generator:
-    session = client.start_session()
-    try:
-        yield session
-    finally:
-        session.end_session()
+# def get_session() -> Generator:
+#     session = client.start_session()
+#     try:
+#         yield session
+#     finally:
+#         session.end_session()
 
+def get_db() -> Generator:
+    try:
+        db = session.SessionLocal()
+        yield db
+    finally:
+        db.close()
 
 async def get_current_user(
+    db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
-) -> User:
+) -> models.User | None:
 
     try:
         payload = jwt.decode(
@@ -44,7 +51,7 @@ async def get_current_user(
     except JWTError:
         raise CredentialException
 
-    user = crud.user.get_by_email(username)
+    user = crud.user.get_by_email(db=db, email=username)
 
     if user is None:
         raise CredentialException
@@ -53,7 +60,7 @@ async def get_current_user(
 
 async def get_current_workspace(
     token: str = Depends(oauth2_scheme)
-) -> Workspace:
+) -> models.Workspace | None:
     try:
         payload = jwt.decode(
             token,
