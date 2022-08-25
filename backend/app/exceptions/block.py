@@ -8,7 +8,7 @@ class FileAsFolderException(base.BadRequestException):
 
 class FileIsNullException(base.BadRequestException):
     def __init__(self) -> None:
-        self.detail = "A file cannot be empty. You must upload a file if is_folder is false"
+        self.detail = "A file cannot be empty when 'is_folder' is false. Please upload a file or set 'is_folder' true"
 
 
 class NoParentFolderException(base.AcceptedException):
