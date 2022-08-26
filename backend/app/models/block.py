@@ -11,7 +11,7 @@ class Block(Base):
     is_folder = Column(TINYINT(unsigned=True), nullable=False)
     creation_date = Column(TIMESTAMP, nullable=False)
     created_by = Column(INTEGER, ForeignKey('users.user_id'), nullable=False)
-    file_type = Column(CHAR(50), nullable=True, default=0)
+    file_type = Column(CHAR(50), nullable=True)
     file_url = Column(TEXT, nullable=True)
     size = Column(INTEGER(unsigned=True), nullable=True)
     parent_folder = Column(INTEGER(unsigned=True), ForeignKey('blocks.block_id'), nullable=True)

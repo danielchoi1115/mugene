@@ -11,6 +11,6 @@ class User(Base):
     first_name = Column(String(256), nullable=True)
     last_name = Column(String(256), nullable=True)
     account_level = Column(TINYINT(4), nullable=False, default=0)
-    creation_date = Column(TIMESTAMP, nullable=True)
+    creation_date = Column(TIMESTAMP, nullable=False)
     organization_code = Column(VARCHAR(50), nullable=False)
     
