@@ -4,7 +4,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from app.schemas.dbref import DBRefBase, RefBlock
 from .pyobjectid import PyObjectId
-from .member import Member
 from fastapi import Form
 from bson.objectid import ObjectId
 # from bson import DBRef
@@ -26,7 +25,7 @@ class BlockUpdate(BlockBase):
 class BlockInDB(BlockBase):
     block_id: Optional[int] = None
     creation_date: datetime
-    created_by: Member
+    created_by: Optional[int] = None
     file_type: Optional[str]
     file_url: Optional[str]
     size: Optional[int] = Field(default=None, gt=0, description="The file size must be greater than zero")

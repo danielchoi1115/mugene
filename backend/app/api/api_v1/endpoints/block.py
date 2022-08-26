@@ -9,7 +9,6 @@ from pymongo.client_session import ClientSession
 import os
 from app.schemas.dbref import RefBlock, RefUser
 from app import exceptions
-from app.schemas.member import Member
 from app.schemas.pyobjectid import PyObjectId
 from sqlalchemy.orm import Session
 from app import models
