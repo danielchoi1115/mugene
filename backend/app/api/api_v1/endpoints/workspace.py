@@ -5,7 +5,6 @@ from app import crud, exceptions, schemas
 from app.schemas.dbref import RefWorkspace
 from pymongo.client_session import ClientSession
 from app.api import deps
-from app.schemas.member import Member
 from app.schemas.pyobjectid import PyObjectId
 from app.schemas.workspace import WorkspaceCreate
 from sqlalchemy.orm import Session
@@ -40,13 +39,11 @@ def create_workspace(
 @router.put("/members", status_code=status.HTTP_200_OK)
 def update_members(
     workspace_id: PyObjectId,
-    members: List[Member],
     session: ClientSession = Depends(deps.get_db)
 ) -> schemas.UpdateResponse:
     
     update_result = crud.workspace.add_members(
         workspace_id=workspace_id,
-        members=members,
         session=session
     )
     return update_result
