@@ -22,7 +22,7 @@ class CRUDBlock():
         user_in: models.User,
     ) -> models.Block:
         
-        file_type = 'directory'
+        file_type = None
         file_url = None
         size = None
 
