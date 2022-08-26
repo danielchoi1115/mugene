@@ -1,5 +1,5 @@
 from .user import UserInDB, UserOut
 from .response import InsertResponse, InsertResponseError, UpdateResponse
-from .member import Member
+from .member import MemberCreate, MemberOut, MemberUpdate
 from .workspace import WorkspaceOut,WorkspaceCreate
 from .block import BlockCreate, BlockOut
