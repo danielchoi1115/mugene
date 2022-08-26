@@ -20,6 +20,7 @@ services:
       MYSQL_DATABASE: mysql
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
+      TZ: Asia/Seoul
     volumes:
       # -v (directory mount setting)
       - mariadb:/var/lib/mysql
