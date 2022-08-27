@@ -14,5 +14,5 @@ class Block(Base):
     file_type = Column(CHAR(50), nullable=True)
     file_url = Column(TEXT, nullable=True)
     size = Column(INTEGER(unsigned=True), nullable=True)
-    parent_folder = Column(INTEGER(unsigned=True), ForeignKey('blocks.block_id'), nullable=True)
+    parent_id = Column(INTEGER(unsigned=True), ForeignKey('blocks.block_id'), nullable=True)
     
