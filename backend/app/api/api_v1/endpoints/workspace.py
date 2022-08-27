@@ -35,22 +35,3 @@ def create_workspace(
     user = crud.workspace.create(db=db, user_in=user_in, obj_in=workspace_in)
 
     return user
-
-@router.put("/members", status_code=status.HTTP_200_OK)
-def update_members(
-    workspace_id: PyObjectId,
-    session: ClientSession = Depends(deps.get_db)
-) -> schemas.UpdateResponse:
-    
-    update_result = crud.workspace.add_members(
-        workspace_id=workspace_id,
-        session=session
-    )
-    return update_result
-    
-@router.put("/members/{memberId}", status_code=status.HTTP_201_CREATED)
-def create_workspac(
-    list: WorkspaceCreate,
-    session: ClientSession = Depends(deps.get_db)
-) -> schemas.UpdateResponse:
-    ... 
