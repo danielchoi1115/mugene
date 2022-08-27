@@ -2,8 +2,9 @@ from datetime import datetime
 import os
 from typing import List
 from app import exceptions
+from app.crud.base import CRUDBase
 from app.db.init_client import client
-from app.schemas.block import Block
+from app.schemas.block import Block, BlockCreate, BlockUpdate
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
@@ -12,13 +13,13 @@ from app import schemas
 from app.schemas.pyobjectid import PyObjectId
 
 
-class CRUDBlock():
+class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
     async def create(
         self,
+        db: Session,
         workspace_id: int,
         block_in: schemas.BlockCreate,
         file: UploadFile,
-        db: Session,
         user_in: models.User,
     ) -> models.Block:
         
@@ -33,33 +34,54 @@ class CRUDBlock():
             file_url = filename
 
         db_obj = models.Block(
-            block_name=block_in.block_name,
             workspace_id=workspace_id,
+            block_name=block_in.block_name,
             is_folder=block_in.is_folder,
             creation_date=datetime.utcnow(),
             created_by=user_in.user_id,
             file_type=file_type,
             file_url=file_url,
             size=size,
-            parent_folder=block_in.parent_folder_id,
+            parent_id=block_in.parent_id,
         )
         
         db.add(db_obj)
         db.commit()
 
         return db_obj
-
+    
+    def get_multi(
+        self, 
+        db: Session, 
+        workspace_id: int,
+        *, 
+        find_by_parent: bool = True, 
+        parent_id: int = None,
+        skip: int = 0, 
+        limit: int = 100
+    ) -> List[models.Block]:
+        if find_by_parent:
+            return db.query(self.model).filter(
+                    self.model.parent_id == parent_id,
+                    self.model.workspace_id == workspace_id
+                ).offset(skip).limit(limit).all()
+        
+        return db.query(self.model).filter(
+                self.model.workspace_id == workspace_id
+            ).offset(skip).limit(limit).all()
+    
     def read_many(
         self,
         workspace_id: str,
-        parent_id: PyObjectId = None,
+        parent_id: int = None,
         find_by_parents: bool = True,
         start: int = 0,
         end: int = 0
     ) -> List[Block]:
+        
         filter_ = {}
         if find_by_parents:
-            filter_ = {"parent_folder.$id": parent_id}
+            filter_ = {"parent_id.$id": parent_id}
         res = client['storage_db'][workspace_id].find(
             filter=filter_
         )
@@ -77,4 +99,4 @@ class CRUDBlock():
         return read_result
 
 
-block = CRUDBlock()
+block = CRUDBlock(models.Block)
