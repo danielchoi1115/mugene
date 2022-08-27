@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, status, UploadFile, File, Form
 from app import schemas
-from app.schemas.block import Block, BlockInDB
+from app.schemas.block import Block
 from app import crud
 from app.api import deps
 from pymongo.client_session import ClientSession
@@ -16,22 +16,26 @@ router = APIRouter()
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[Block])
-def get_block(
-    find_by_parents: bool = True,
-    parent_id: PyObjectId = None,
-    start: int = 0,
-    end: int = 10,
+def get_many_blocks(
+    find_by_parent: bool = True,
+    parent_id: int = None,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
     workspace_id: str = Depends(deps.get_current_workspace)
 ) -> List[Block]:
     # validateStorage()
     # validateBlock()
-    read_result = crud.block.read_many(
+    
+    read_result = crud.block.get_multi(
         workspace_id=workspace_id,
-        find_by_parents=find_by_parents,
+        find_by_parent=find_by_parent,
         parent_id=parent_id,
-        start=start,
-        end=end
+        skip=skip,
+        limit=limit,
+        db=db
     )
+    
     return read_result
 
 
