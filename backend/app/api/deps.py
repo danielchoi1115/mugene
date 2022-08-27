@@ -76,4 +76,4 @@ async def get_current_workspace(
     except JWTError:
         raise CredentialException
 
-    return '62fcde721fe142b18a02b46b'
+    return '2'
