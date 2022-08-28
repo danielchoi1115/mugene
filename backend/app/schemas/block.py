@@ -11,40 +11,28 @@ from bson.objectid import ObjectId
 
 class BlockBase(BaseModel):
     block_name: str
-    parent_id: Optional[int] = None
+    parent_block_id: Optional[int] = None
 
 class BlockCreate(BlockBase):
     block_name: str = Form()
     is_folder: bool = Form()
-    parent_id: int = Form(None)
+    parent_block_id: int = Form(None)
 
 class BlockUpdate(BlockBase):
     ...
     
-class BlockInDB(BlockBase):
+class BlockOut(BlockBase):
     block_id: Optional[int] = None
+    workspace_id: Optional[int] = None
+    parent_block_id: Optional[int] = None
+    creator_id: Optional[int] = None
+    owner_id: Optional[int] = None
+    block_name: str
     is_folder: bool
-    creation_date: datetime
-    created_by: Optional[int] = None
+    date_created: datetime
     file_type: Optional[str]
     file_url: Optional[str]
-    size: Optional[int] = Field(default=None, gt=0, description="The file size must be greater than zero")
-    parent_id: Optional[int] = None
-    workspace_id: Optional[int] = None
-    class Config:
-        orm_mode = True
-        
-class BlockOut(BlockInDB):
-    ...
-        
-class Block(BlockInDB):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    size: Optional[int]
     
     class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-
-class BlockParent(BaseModel):
-    parent_id: PyObjectId = Field(default_factory=PyObjectId, alias="parent_id.$id")
+        orm_mode = True

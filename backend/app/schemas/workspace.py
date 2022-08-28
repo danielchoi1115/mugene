@@ -10,7 +10,7 @@ class WorkspaceCreate(WorkspaceBase):
     ...
     
 class WorkspaceUpdate(WorkspaceBase):
-    ...
+    owner_id: Optional[int] = None
 
 class WorkspaceInDB(WorkspaceBase):
     workspace_id: Optional[int] = None
@@ -18,4 +18,8 @@ class WorkspaceInDB(WorkspaceBase):
         orm_mode = True
         
 class WorkspaceOut(WorkspaceInDB):
-    ...
+    creator_id: Optional[int] = None
+    owner_id: Optional[int] = None
+    workspace_name: str
+    date_created: datetime
+    
