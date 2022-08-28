@@ -62,3 +62,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.delete(obj)
         db.commit()
         return obj
+    
+    def check_if_null(self, value: Any) -> bool:
+        if str(value) in ['none', 'null', '0']:
+            return True
+        return False
