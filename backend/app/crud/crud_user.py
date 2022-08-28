@@ -20,7 +20,7 @@ class CRUDUser(CRUDBase[models.User, UserCreate, UserUpdate]):
         create_data.pop("password")
         db_obj = models.User(**create_data)
         db_obj.hashed_password = get_password_hash(obj_in.password)
-        db_obj.creation_date = datetime.utcnow()
+        db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
         db.commit()
 

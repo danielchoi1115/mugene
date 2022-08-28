@@ -17,7 +17,7 @@ class CRUDMember(CRUDBase[models.Member, MemberCreate, MemberUpdate]):
         else:
             create_data = obj_in.dict(exclude_unset=True)
         db_obj = models.Member(**create_data)
-        db_obj.join_date = datetime.utcnow()
+        db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
         db.commit()
         return db_obj
