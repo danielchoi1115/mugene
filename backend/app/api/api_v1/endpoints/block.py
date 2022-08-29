@@ -37,7 +37,7 @@ def get_many_blocks(
     return read_result
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.BlockOut)
+@router.post("/", status_code=status.HTTP_200_OK, response_model=schemas.BlockOut)
 async def create_block(
     workspace_id: int,
     block_in: schemas.BlockCreate = Depends(schemas.BlockCreate),
