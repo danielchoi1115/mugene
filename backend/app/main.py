@@ -6,7 +6,7 @@ from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.middleware import BaseMiddleware
 app = FastAPI(
-    title="Recipe API", openapi_url="/openapi.json"
+    title="MuGene API", openapi_url="/openapi.json"
 )
 
 root_router = APIRouter()
