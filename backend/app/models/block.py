@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, VARCHAR, TIMESTAMP, CHAR, TEXT
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import synonym
 from sqlalchemy.dialects.mysql import TINYINT, INTEGER
 from app.db.base_class import Base
 from app.db.primary_keys import pkey
@@ -7,8 +7,11 @@ from sqlalchemy.orm import synonym
 
 class Block(Base):
     __tablename__ = "blocks"
+    # Primary Keys
     block_id = Column(INTEGER(unsigned=True), primary_key=True, index=True)  # 2
     id = synonym('block_id')
+    
+    # Foreign keys
     workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces.id), nullable=False)
     parent_block_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=True)
     creator_id = Column(INTEGER, ForeignKey(pkey.users.id), nullable=False)
