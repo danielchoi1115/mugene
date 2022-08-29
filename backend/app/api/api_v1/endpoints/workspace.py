@@ -35,3 +35,17 @@ def create_workspace(
     user = crud.workspace.create(db=db, user_in=user_in, obj_in=workspace_in)
 
     return user
+
+@router.put("/{workspace_id}", status_code=status.HTTP_200_OK, response_model=schemas.WorkspaceOut)
+def update_workspace(
+    workspace_id: int, 
+    workspace_in: schemas.WorkspaceUpdate,
+    db: Session = Depends(deps.get_db)
+) -> models.Workspace:
+    """
+    Root Get
+    """
+    db_obj = crud.workspace.get(db=db, id=workspace_id)
+    workspace = crud.workspace.update(db=db, db_obj=db_obj, obj_in=workspace_in)
+
+    return workspace

@@ -30,4 +30,4 @@ class CRUDWorkspace(CRUDBase[models.Workspace, schemas.WorkspaceCreate, schemas.
 
         return super().update(db, db_obj=db_obj, obj_in=update_data)
     
-workspace = CRUDWorkspace()
+workspace = CRUDWorkspace(models.Workspace)
