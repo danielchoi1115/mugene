@@ -21,13 +21,13 @@ def get_many_blocks(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
-    workspace_id: str = Depends(deps.get_current_workspace)
+    workspace: models.Workspace = Depends(deps.get_current_workspace)
 ) -> List[models.Block]:
     # validateStorage()
     # validateBlock()
     
     read_result = crud.block.get_multi(
-        workspace_id=workspace_id,
+        workspace_id=workspace.workspace_id,
         parent_block_id=parent_block_id,
         skip=skip,
         limit=limit,
