@@ -9,10 +9,10 @@ class Workspace(Base):
     # Primary Keys
     workspace_id = Column(INTEGER(unsigned=True), primary_key=True, index=True)  # 2
     id = synonym('workspace_id')
-    
+    workspace_uuid= Column(VARCHAR(32), unique=True, nullable=False)
     # Foreign keys
     creator_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
     owner_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
     
-    workspace_name = Column(VARCHAR(50), unique=True, nullable=False)
+    workspace_name = Column(VARCHAR(50), nullable=False)
     date_created = Column(TIMESTAMP, nullable=False)
