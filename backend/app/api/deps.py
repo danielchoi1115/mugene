@@ -1,9 +1,10 @@
 from typing import Generator, Optional
 from pymongo.client_session import ClientSession
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from app import crud
+from app import exceptions
 from app.db.init_client import client
 from app.core.auth import oauth2_scheme
 from app.core.config import settings
@@ -12,7 +13,7 @@ from app.exceptions import CredentialException
 from app import models
 from app.db import session
 from sqlalchemy.orm import Session
-
+from fastapi.security.utils import get_authorization_scheme_param
 class TokenData(BaseModel):
     username: Optional[str] = None
 
@@ -57,23 +58,20 @@ async def get_current_user(
         raise CredentialException
     return user
 
+async def workspace_scheme(request: Request) -> Optional[str]:
+    workspace_token: str = request.headers.get("Workspace")
+    scheme, param = get_authorization_scheme_param(workspace_token)
+    if not workspace_token or scheme.lower() != "uuid":
+        raise exceptions.NoWorkspaceException
+    return param
 
 async def get_current_workspace(
-    token: str = Depends(oauth2_scheme)
+    db: Session = Depends(get_db),
+    # uuid: str = Depends(workspace_scheme)
 ) -> models.Workspace | None:
-    try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET,
-            algorithms=[settings.ALGORITHM],
-            options={"verify_aud": False},
-        )
-        username: str = payload.get("sub")
-        if username is None:
-            raise CredentialException
-        token_data = TokenData(username=username)
+    uuid = '9fe2c4e93f654fdbb24c02b15259716c'
+    workspace = crud.workspace.get_by_uuid(db, uuid)
 
-    except JWTError:
-        raise CredentialException
-
-    return '2'
+    if workspace is None:
+        raise exceptions.NoWorkspaceException
+    return workspace
