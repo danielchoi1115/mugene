@@ -69,7 +69,7 @@ async def get_current_workspace(
     db: Session = Depends(get_db),
     # uuid: str = Depends(workspace_scheme)
 ) -> models.Workspace | None:
-    uuid = '9fe2c4e93f654fdbb24c02b15259716c'
+    uuid = b'FUj776jLTQSUb78VtJHK8A'
     workspace = crud.workspace.get_by_uuid(db, uuid)
 
     if workspace is None:
