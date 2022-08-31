@@ -15,11 +15,14 @@ router = APIRouter()
 # 3
 
 
-@router.get("/", status_code=200)
-def get_workspace() -> dict:
+@router.get("/", status_code=status.HTTP_200_OK, response_model=schemas.WorkspaceOut)
+def get_workspace(db: Session = Depends(deps.get_db)) -> dict:
     """
     Root Get
     """
+    workspace = crud.workspace.get(db=db, id=5)
+    workspace.workspace_uuid = workspace.workspace_uuid.strip().decode('ascii')
+    return workspace
     return {"msg": "Hello, World!"}
 
 
@@ -32,9 +35,9 @@ def create_workspace(
     """
     Root Get
     """
-    user = crud.workspace.create(db=db, user_in=user_in, obj_in=workspace_in)
+    workspace = crud.workspace.create(db=db, user_in=user_in, obj_in=workspace_in)
 
-    return user
+    return workspace
 
 @router.put("/{workspace_id}", status_code=status.HTTP_200_OK, response_model=schemas.WorkspaceOut)
 def update_workspace(
