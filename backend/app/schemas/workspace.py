@@ -18,6 +18,7 @@ class WorkspaceInDB(WorkspaceBase):
         orm_mode = True
         
 class WorkspaceOut(WorkspaceInDB):
+    workspace_uuid: str | bytes
     creator_id: Optional[int] = None
     owner_id: Optional[int] = None
     workspace_name: str
