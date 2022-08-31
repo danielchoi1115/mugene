@@ -15,5 +15,5 @@ class PaidTarget(Base):
     target_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.targets.id), nullable=False)
     payer_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
     
-    organization_code = Column(VARCHAR(50), nullable=False)
+    date_paid = Column(TIMESTAMP, nullable=False)
     
