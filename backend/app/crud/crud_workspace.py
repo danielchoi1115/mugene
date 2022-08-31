@@ -7,9 +7,9 @@ from app.db.init_client import client
 from pymongo.client_session import ClientSession
 from app import models
 from sqlalchemy.orm import Session
-import uuid
+from app.utils import B64UUID
 class CRUDWorkspace(CRUDBase[models.Workspace, schemas.WorkspaceCreate, schemas.WorkspaceUpdate]):
-    def get_by_uuid(self, db: Session, uuid: str) -> Optional[models.Workspace]:
+    def get_by_uuid(self, db: Session, uuid: bytes) -> Optional[models.Workspace]:
         return db.query(self.model).filter(self.model.workspace_uuid == uuid).first()
 
     def create(self, db: Session, *, user_in: models.User, obj_in: schemas.WorkspaceCreate) -> models.Workspace:
@@ -17,7 +17,7 @@ class CRUDWorkspace(CRUDBase[models.Workspace, schemas.WorkspaceCreate, schemas.
         db_obj = models.Workspace(**create_data)
         db_obj.creator_id = user_in.user_id
         db_obj.owner_id = user_in.user_id
-        db_obj.workspace_uuid = uuid.uuid4().hex
+        db_obj.workspace_uuid = B64UUID().bytes
         db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
         db.commit()
