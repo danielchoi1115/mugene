@@ -11,5 +11,5 @@ class PKey:
     targets = ColumnBase('targets.target_id')
     users = ColumnBase('users.user_id')
     workspaces = ColumnBase('workspaces.workspace_id')
-        
+    reportdata = ColumnBase('reportdata.reportdata_id')
 pkey = PKey()
