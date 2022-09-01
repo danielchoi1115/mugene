@@ -11,9 +11,10 @@ class B64UUID():
             self.uuid = uuid_
         else:
             self.uuid = uuid.uuid4()
-        
-        self.bytes = urlsafe_b64encode(self.uuid.bytes).rstrip(b'=')
 
+    @property
+    def bytes(self):
+        return urlsafe_b64encode(self.uuid.bytes).rstrip(b'=')
     # def slug2uuid(slug):
     #     if type(slug) == bytes:
     #         slug = slug.decode('ascii')
