@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from app import models
 from app import schemas
 from app.schemas.pyobjectid import PyObjectId
-
+from app.utils import B64UUID
 
 class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
     async def create(
@@ -34,6 +34,7 @@ class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
             file_url = filename
 
         db_obj = models.Block(
+            block_uuid=B64UUID().bytes,
             workspace_id=workspace_id,
             parent_block_id=block_in.parent_block_id,
             creator_id=user_in.user_id,
