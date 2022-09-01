@@ -7,7 +7,11 @@ class ReportdataBase(BaseModel):
     ...
     
 class ReportdataCreate(ReportdataBase):
+    sequence: str
+    sequence_file: Optional[bytes]
+
+class ReportdataUpdate(ReportdataBase):
     ...
-    
+
 class ReportdataOut(ReportdataBase):
     report_id: Optional[int] = None
