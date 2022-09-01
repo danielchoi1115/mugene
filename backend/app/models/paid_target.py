@@ -11,9 +11,9 @@ class PaidTarget(Base):
     id = synonym('paid_target_id')
     
     # Foreign keys
-    workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces.id), nullable=False)
-    target_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.targets.id), nullable=False)
-    payer_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
+    workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces), nullable=False)
+    target_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.targets), nullable=False)
+    payer_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
     
     date_paid = Column(TIMESTAMP, nullable=False)
     
