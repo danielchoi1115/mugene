@@ -1,15 +1,30 @@
 
-class ColumnBase:
-    def __init__(self, id: str) -> None:
-        self.id: str = id
+from typing import Literal
+
 
 class PKey:
-    blocks = ColumnBase('blocks.block_id')
-    members = ColumnBase('members.member_id')
-    paid_targets = ColumnBase('paid_targets.paid_target_id')
-    reports = ColumnBase('reports.report_id')
-    targets = ColumnBase('targets.target_id')
-    users = ColumnBase('users.user_id')
-    workspaces = ColumnBase('workspaces.workspace_id')
-    reportdata = ColumnBase('reportdata.reportdata_id')
+    @property
+    def blocks(self):
+        return 'blocks.block_id'
+    @property
+    def members(self):
+        return 'members.member_id'
+    @property
+    def paid_targets(self):
+        return 'paid_targets.paid_target_id'
+    @property
+    def reports(self):
+        return 'reports.report_id'
+    @property
+    def targets(self):
+        return 'targets.target_id'
+    @property
+    def users(self):
+        return 'users.user_id'
+    @property
+    def workspaces(self):
+        return 'workspaces.workspace_uuid'
+    @property
+    def reportdata(self):
+        return 'reportdata.reportdata_id'
 pkey = PKey()
