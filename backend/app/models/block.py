@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, VARCHAR, TIMESTAMP, CHAR, TEXT
+from sqlalchemy import Column, Integer, BINARY, ForeignKey, VARCHAR, TIMESTAMP, CHAR, TEXT
 from sqlalchemy.orm import synonym
 from sqlalchemy.dialects.mysql import TINYINT, INTEGER
 from app.db.base_class import Base
@@ -11,12 +11,16 @@ class Block(Base):
     block_id = Column(INTEGER(unsigned=True), primary_key=True, index=True)  # 2
     id = synonym('block_id')
     
-    # Foreign keys
-    workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces.id), nullable=False)
-    parent_block_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=True)
-    creator_id = Column(INTEGER, ForeignKey(pkey.users.id), nullable=False)
+    # Unique Keys
+    block_uuid = Column(BINARY(22), unique=True, nullable=False)
+    uuid = synonym('block_uuid')
     
-    block_name = Column(VARCHAR(50), unique=True, nullable=False)
+    # Foreign keys
+    workspace_uuid = Column(BINARY(22), ForeignKey(pkey.workspaces), nullable=False)
+    parent_block_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.blocks), nullable=True)
+    creator_id = Column(INTEGER, ForeignKey(pkey.users), nullable=False)
+    
+    block_name = Column(VARCHAR(50), nullable=False)
     is_folder = Column(TINYINT(unsigned=True), nullable=False)
     date_created = Column(TIMESTAMP, nullable=False)
     file_type = Column(CHAR(50), nullable=True)

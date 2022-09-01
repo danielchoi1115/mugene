@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, VARCHAR, TIMESTAMP
+from sqlalchemy import Column, BINARY, String, ForeignKey, VARCHAR, TIMESTAMP
 from sqlalchemy.orm import synonym
 from sqlalchemy.dialects.mysql import TINYINT, INTEGER
 from app.db.base_class import Base
@@ -10,8 +10,12 @@ class User(Base):
     user_id = Column(INTEGER(unsigned=True), primary_key=True, index=True)  # 2
     id = synonym('user_id')
     
+    # Unique Keys
+    user_uuid = Column(BINARY(22), unique=True, nullable=False)
+    uuid = synonym('user_uuid')
+    
     # Foreign keys
-    approver_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
+    approver_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
     
     email = Column(VARCHAR(256), unique=True, nullable=False)
     hashed_password = Column(VARCHAR(256), nullable=False)
