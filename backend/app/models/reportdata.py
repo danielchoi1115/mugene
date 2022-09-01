@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, VARCHAR, TIMESTAMP
+from sqlalchemy import Column, BINARY, TEXT, ForeignKey, VARCHAR, TIMESTAMP
 from sqlalchemy.orm import synonym
 from sqlalchemy.dialects.mysql import TINYINT, INTEGER, FLOAT
 from app.db.base_class import Base
@@ -11,5 +11,5 @@ class Reportdata(Base):
     id = synonym('reportdata_id')
     
     # Foreign keys
-    user_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users.id), nullable=False)
-    date_created = Column(TIMESTAMP, nullable=False)
+    sequence = Column(TEXT, nullable=True)
+    sequence_file = Column(BINARY(22), nullable=True)
