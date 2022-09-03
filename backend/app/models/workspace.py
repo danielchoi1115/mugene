@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, VARCHAR, TIMESTAMP, CHAR, TEXT, BINARY
+from sqlalchemy import Column, Integer, BINARY, ForeignKey, VARCHAR, TIMESTAMP, CHAR, TEXT, BINARY
 from sqlalchemy.orm import synonym
 from sqlalchemy.dialects.mysql import TINYINT, INTEGER
 from app.db.base_class import Base
@@ -15,8 +15,8 @@ class Workspace(Base):
     uuid = synonym('workspace_uuid')
     
     # Foreign keys
-    creator_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
-    owner_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
+    creator_uuid = Column(BINARY(22), ForeignKey(pkey.users_uuid), nullable=False)
+    owner_uuid = Column(BINARY(22), ForeignKey(pkey.users_uuid), nullable=False)
     
     workspace_name = Column(VARCHAR(50), nullable=False)
     date_created = Column(TIMESTAMP, nullable=False)

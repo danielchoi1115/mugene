@@ -10,17 +10,18 @@ class WorkspaceCreate(WorkspaceBase):
     ...
     
 class WorkspaceUpdate(WorkspaceBase):
-    owner_id: Optional[int] = None
+    owner_uuid: Optional[bytes] = None
 
 class WorkspaceInDB(WorkspaceBase):
-    workspace_id: Optional[int] = None
+    workspace_uuid: Optional[bytes] = None
     class Config:
         orm_mode = True
         
-class WorkspaceOut(WorkspaceInDB):
-    workspace_uuid: str | bytes
-    creator_id: Optional[int] = None
-    owner_id: Optional[int] = None
+class WorkspaceOut(BaseModel):
+    workspace_uuid: Optional[bytes]
+    creator_uuid: Optional[bytes] = None
+    owner_uuid: Optional[bytes] = None
     workspace_name: str
     date_created: datetime
-    
+    class Config:
+        orm_mode = True

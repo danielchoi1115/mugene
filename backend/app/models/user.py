@@ -15,7 +15,7 @@ class User(Base):
     uuid = synonym('user_uuid')
     
     # Foreign keys
-    approver_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
+    approver_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users_id), nullable=False)
     
     email = Column(VARCHAR(256), unique=True, nullable=False)
     hashed_password = Column(VARCHAR(256), nullable=False)

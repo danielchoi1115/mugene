@@ -10,6 +10,10 @@ class Reportdata(Base):
     reportdata_id = Column(INTEGER(unsigned=True), primary_key=True, index=True)  # 2
     id = synonym('reportdata_id')
     
-    # Foreign keys
+    # Unique Keys
+    reportdata_uuid = Column(BINARY(22), unique=True, nullable=False)
+    uuid = synonym('reportdata_uuid')
+    
+    
     sequence = Column(TEXT, nullable=True)
     sequence_file = Column(BINARY(22), nullable=True)

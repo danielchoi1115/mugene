@@ -15,8 +15,8 @@ class Member(Base):
     uuid = synonym('member_uuid')
     
     # Foreign keys
-    workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces), nullable=False)
-    user_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
+    workspace_uuid = Column(BINARY(22), ForeignKey(pkey.workspaces_uuid), nullable=False)
+    user_uuid = Column(BINARY(22), ForeignKey(pkey.users_uuid), nullable=False)
     
     member_level = Column(TINYINT(4), nullable=False, default=1)
     date_created = Column(TIMESTAMP, nullable=False)

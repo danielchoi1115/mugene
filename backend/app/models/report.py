@@ -15,9 +15,9 @@ class Report(Base):
     uuid = synonym('report_uuid')
     
     # Foreign keys
-    workspace_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.workspaces), nullable=False)
-    requestor_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.users), nullable=False)
-    reportdata_id = Column(INTEGER(unsigned=True), ForeignKey(pkey.reportdata), nullable=False)
+    workspace_uuid = Column(BINARY(22), ForeignKey(pkey.workspaces_uuid), nullable=False)
+    requestor_uuid = Column(BINARY(22), ForeignKey(pkey.users_uuid), nullable=False)
+    reportdata_uuid = Column(BINARY(22), ForeignKey(pkey.reportdata_uuid), nullable=False)
     
     report_name = Column(VARCHAR(50), nullable=False)
     

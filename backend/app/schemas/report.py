@@ -11,8 +11,7 @@ class ReportCreate(ReportBase):
     
 class ReportUpdate(ReportBase):
     report_status: Optional[int] = None
-    processing_time: Optional[float] = None
-    date_completed: Optional[datetime] = None
+    processing_time: Optional[float]
     
 class ReportOut(ReportBase):
     report_id: Optional[int] = None
