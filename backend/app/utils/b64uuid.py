@@ -4,6 +4,7 @@ from uuid import UUID
 
 # uuid that is base64 encoded
 class B64UUID():
+    """Instances of the UUID class with urlsafe base 64 encoded"""
     def __init__(self, uuid_: bytes | UUID = None) -> None:
         if type(uuid_) == bytes:
             self.uuid = UUID(bytes=uuid_)
