@@ -4,7 +4,7 @@ from typing import List
 from app import exceptions
 from app.crud.base import CRUDBase
 from app.db.init_client import client
-from app.schemas.block import BlockCreate, BlockUpdate
+from app.schemas.file import FileCreate, FileUpdate
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
@@ -13,15 +13,15 @@ from app import schemas
 from app.schemas.pyobjectid import PyObjectId
 from app.utils import B64UUID
 
-class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
+class CRUDFile(CRUDBase[models.File, FileCreate, FileUpdate]):
     async def create(
         self,
         db: Session,
-        workspace_id: int,
-        block_in: schemas.BlockCreate,
+        file_in: schemas.FileCreate,
         file: UploadFile,
         user_in: models.User,
-    ) -> models.Block:
+        workspace_in: models.Workspace,
+    ) -> models.File:
         
         file_type = None
         file_url = None
@@ -32,15 +32,18 @@ class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
             size = len(content)
             filename, file_type = os.path.splitext(file.filename)
             file_url = filename
-
-        db_obj = models.Block(
-            block_uuid=B64UUID().bytes,
-            workspace_id=workspace_id,
-            parent_block_id=block_in.parent_block_id,
-            creator_id=user_in.user_id,
-            owner_id=user_in.user_id,
-            block_name=block_in.block_name,
-            is_folder=block_in.is_folder,
+        
+        if type(file_in.parent_file_uuid) == str:
+            file_in.parent_file_uuid = file_in.parent_file_uuid.encode()
+        
+        db_obj = models.File(
+            file_uuid=B64UUID().bytes,
+            workspace_uuid=workspace_in.workspace_uuid,
+            creator_uuid=user_in.user_uuid,
+            owner_uuid=user_in.user_uuid,
+            file_name=file_in.file_name,
+            is_dir=file_in.is_dir,
+            parent_file_uuid=file_in.parent_file_uuid,
             date_created=datetime.utcnow(),
             file_type=file_type,
             file_url=file_url,
@@ -57,15 +60,15 @@ class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
         db: Session, 
         workspace_id: int,
         *,  
-        parent_block_id: int|str = None,
+        parent_file_id: int|str = None,
         skip: int = 0, 
         limit: int = 100
-    ) -> List[models.Block]:
-        if parent_block_id:
-            if self.check_if_null(parent_block_id):
-                parent_block_id = None
+    ) -> List[models.File]:
+        if parent_file_id:
+            if self.check_if_null(parent_file_id):
+                parent_file_id = None
             return db.query(self.model).filter(
-                    self.model.parent_block_id == parent_block_id,
+                    self.model.parent_file_id == parent_file_id,
                     self.model.workspace_id == workspace_id
                 ).offset(skip).limit(limit).all()
         
@@ -74,4 +77,4 @@ class CRUDBlock(CRUDBase[models.Block, BlockCreate, BlockUpdate]):
             ).offset(skip).limit(limit).all()
 
 
-block = CRUDBlock(models.Block)
+file = CRUDFile(models.File)
