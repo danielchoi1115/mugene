@@ -5,7 +5,7 @@ from app.crud.base import CRUDBase
 from app import models
 from app.schemas.member import MemberCreate, MemberUpdate
 from sqlalchemy.orm import Session
-from fastapi.encoders import jsonable_encoder
+from app.utils import B64UUID
 
 class CRUDMember(CRUDBase[models.Member, MemberCreate, MemberUpdate]):
     def get(self, db: Session, id: Any) -> Optional[models.Member]:
@@ -17,6 +17,7 @@ class CRUDMember(CRUDBase[models.Member, MemberCreate, MemberUpdate]):
         else:
             create_data = obj_in.dict(exclude_unset=True)
         db_obj = models.Member(**create_data)
+        db_obj.member_uuid = B64UUID().bytes
         db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
         db.commit()

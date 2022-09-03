@@ -9,15 +9,12 @@ from app import models
 from sqlalchemy.orm import Session
 from app.utils import B64UUID
 class CRUDWorkspace(CRUDBase[models.Workspace, schemas.WorkspaceCreate, schemas.WorkspaceUpdate]):
-    def get_by_uuid(self, db: Session, uuid: bytes) -> Optional[models.Workspace]:
-        return db.query(self.model).filter(self.model.workspace_uuid == uuid).first()
-
     def create(self, db: Session, *, user_in: models.User, obj_in: schemas.WorkspaceCreate) -> models.Workspace:
         create_data = obj_in.dict()
         db_obj = models.Workspace(**create_data)
-        db_obj.creator_id = user_in.user_id
-        db_obj.owner_id = user_in.user_id
         db_obj.workspace_uuid = B64UUID().bytes
+        db_obj.creator_uuid = user_in.user_uuid
+        db_obj.owner_uuid = user_in.user_uuid
         db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
         db.commit()

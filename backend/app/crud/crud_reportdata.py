@@ -22,6 +22,7 @@ class CRUDReportdata(CRUDBase[models.Reportdata, schemas.ReportdataCreate, schem
             create_data = obj_in.dict(exclude_unset=True)
             
         db_obj = models.Reportdata(**create_data)
+        db_obj.reportdata_uuid = B64UUID().bytes
         db.add(db_obj)
         db.commit()
         return db_obj 

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.crud.base import CRUDBase
 from app import models
 from app.schemas.user import UserCreate, UserUpdate
-
+from app.utils import B64UUID
 from datetime import datetime
 from app.core.security import get_password_hash
 
@@ -19,6 +19,7 @@ class CRUDUser(CRUDBase[models.User, UserCreate, UserUpdate]):
         create_data = obj_in.dict()
         create_data.pop("password")
         db_obj = models.User(**create_data)
+        db_obj.user_uuid = B64UUID().bytes
         db_obj.hashed_password = get_password_hash(obj_in.password)
         db_obj.date_created = datetime.utcnow()
         db.add(db_obj)
