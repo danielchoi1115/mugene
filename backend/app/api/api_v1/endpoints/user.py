@@ -43,3 +43,17 @@ def read_users_me(
 
     user = current_user
     return user
+
+@router.get("/{user_uuid}", response_model=schemas.UserOut)
+def read_users_me(
+    user_uuid: str, 
+    db: Session = Depends(deps.get_db)
+):
+    """
+    Fetch the current logged in user.
+    """
+
+    user = crud.user.get_by_uuid(db=db, uuid=user_uuid)
+    if not user:
+        raise exceptions.user.UserNotFoundException
+    return user

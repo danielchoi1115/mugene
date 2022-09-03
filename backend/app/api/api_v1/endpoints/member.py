@@ -20,14 +20,22 @@ def create_member(
     return member
 
 
-@router.put("/{member_id}", status_code=status.HTTP_200_OK, response_model=schemas.MemberOut)
+@router.put("/{member_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.MemberOut)
 def update_member(
-    member_id: int,
+    member_uuid: str,
     member_in: schemas.MemberUpdate,
     db: Session = Depends(deps.get_db)
 ) -> models.Member:
-    member_obj = crud.member.get(db=db, id=member_id)
+    member_obj = crud.member.get_by_uuid(db=db, uuid=member_uuid)
     member = crud.member.update(db=db, db_obj=member_obj, obj_in=member_in)
 
     return member
     
+@router.get("/{member_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.MemberOut)
+def update_member(
+    member_uuid: str,
+    db: Session = Depends(deps.get_db)
+) -> models.Member:
+    
+    member = crud.member.get_by_uuid(db=db, uuid=member_uuid)
+    return member

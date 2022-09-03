@@ -12,13 +12,25 @@ from app import models
 router = APIRouter()
 
 # 3
-@router.get("/{report_id}", status_code=status.HTTP_200_OK, response_model=schemas.WorkspaceOut)
+@router.get("/{report_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.ReportOut)
 def get_report(
-    report_id: int, 
+    report_uuid: str, 
     db: Session = Depends(deps.get_db)
 ) -> models.Report:
     
-    return crud.report.get(db=db, id=report_id)
+    return crud.report.get_by_uuid(db=db, uuid=report_uuid)
+
+@router.put("/{report_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.ReportOut)
+def update_report(
+    report_uuid: str,
+    report_in: schemas.ReportUpdate,
+    db: Session = Depends(deps.get_db)
+) -> models.Report:
+    
+    report_obj = crud.report.get_by_uuid(db=db, uuid=report_uuid)
+    report = crud.report.update(db=db, db_obj=report_obj, obj_in=report_in)
+
+    return report
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ReportOut)
