@@ -1,6 +1,6 @@
 from . import base
 
-class NoUserFoundException(base.AcceptedException):
+class UserNotFoundException(base.AcceptedException):
     def __init__(self) -> None:
         self.detail = "Request was successful, but failed to preceed since no user was found. Please check the user ID"
 

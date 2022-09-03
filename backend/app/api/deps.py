@@ -62,7 +62,7 @@ async def workspace_scheme(request: Request) -> Optional[str]:
     workspace_token: str = request.headers.get("Workspace")
     scheme, param = get_authorization_scheme_param(workspace_token)
     if not workspace_token or scheme.lower() != "uuid":
-        raise exceptions.NoWorkspaceException
+        raise exceptions.WorkspaceNotFoundException
     return param
 
 async def get_current_workspace(
@@ -73,5 +73,5 @@ async def get_current_workspace(
     workspace = crud.workspace.get_by_uuid(db, uuid)
 
     if workspace is None:
-        raise exceptions.NoWorkspaceException
+        raise exceptions.WorkspaceNotFoundException
     return workspace
