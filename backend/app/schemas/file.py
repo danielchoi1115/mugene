@@ -2,19 +2,15 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
-from app.schemas.dbref import DBRefBase, RefFile
-from .pyobjectid import PyObjectId
 from fastapi import Form
-from bson.objectid import ObjectId
-# from bson import DBRef
 
 
 class FileBase(BaseModel):
-    file_name: str
+    file_name: Optional[str]
     parent_file_uuid: Optional[bytes] = None
 
 class FileCreate(FileBase):
-    file_name: str = Form()
+    file_name: str = Form(None)
     is_dir: bool = Form()
     parent_file_uuid: str = Form(None)
 
