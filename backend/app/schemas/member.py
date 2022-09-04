@@ -8,18 +8,12 @@ class MemberBase(BaseModel):
     is_active: Optional[bool]
     
 class MemberCreate(MemberBase):
-    workspace_uuid: bytes
     user_uuid: bytes
     member_level: int
     is_active: bool = True
     
 class MemberUpdate(MemberBase):
     ...
-    
-# class MemberInDB(MemberCreate):
-#     member_uuid: Optional[bytes] = None
-#     class Config:
-#         orm_mode = True
         
 class MemberOut(BaseModel):
     member_uuid: Optional[bytes] = None
