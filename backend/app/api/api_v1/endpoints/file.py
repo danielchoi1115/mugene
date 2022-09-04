@@ -7,7 +7,6 @@ from app import crud
 from app.api import deps
 from pymongo.client_session import ClientSession
 import os
-from app.schemas.dbref import RefFile, RefUser
 from app import exceptions
 from app.schemas.pyobjectid import PyObjectId
 from sqlalchemy.orm import Session
@@ -39,7 +38,7 @@ def get_many_files(
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.FileOut)
 async def create_file(
-    file: UploadFile = File(None),
+    filedata: UploadFile = File(None),
     db: Session = Depends(deps.get_db),
     file_in: schemas.FileCreate = Depends(schemas.FileCreate),
     user_in: models.User = Depends(deps.get_current_user),
@@ -48,16 +47,36 @@ async def create_file(
     """
     Post File
     """
-    if file and file_in.is_dir:
+    if filedata and file_in.is_dir:
         raise exceptions.UploadException
-    elif not file and file_in.is_dir == False:
+    elif not filedata and file_in.is_dir == False:
         raise exceptions.NullFileException
     
     file = await crud.file.create(
         file_in=file_in, 
-        file=file,
+        filedata=filedata,
         db=db,
         user_in=user_in,
         workspace_in=workspace_in,
     )
     return file
+
+@router.get("/{file_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.FileOut)
+def get_file(
+    file_uuid: str,
+    db: Session = Depends(deps.get_db)
+) -> models.File:
+    
+    file = crud.file.get_by_uuid(db=db, uuid=file_uuid)
+    
+    return file
+
+@router.delete("/{file_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.FileOut)
+def delete_file(
+    file_uuid: str,
+    db: Session = Depends(deps.get_db)
+) -> models.File:
+    
+    read_result = crud.file.delete_by_uuid(db=db, uuid=file_uuid)
+    
+    return read_result
