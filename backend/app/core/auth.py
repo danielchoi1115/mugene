@@ -10,7 +10,6 @@ from app import crud
 from app import models
 from pydantic import EmailStr
 
-from app.crud.projections.user import UserAuthProjection
 from app import schemas
 from sqlalchemy.orm import Session
 JWTPayloadMapping = MutableMapping[

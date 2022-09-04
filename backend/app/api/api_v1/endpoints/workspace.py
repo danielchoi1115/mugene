@@ -1,15 +1,10 @@
 from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, status
-from app import crud, exceptions, schemas
-from app.schemas.dbref import RefWorkspace
-from pymongo.client_session import ClientSession
+from app import crud, exceptions, schemas, models
 from app.api import deps
-from app.schemas.pyobjectid import PyObjectId
 from app.schemas.workspace import WorkspaceCreate
 from sqlalchemy.orm import Session
-from app.crud.crud_workspace import CRUDWorkspace
-from app import models
 router = APIRouter()
 
 # 3
@@ -21,9 +16,7 @@ def get_workspace(db: Session = Depends(deps.get_db)) -> dict:
     Root Get
     """
     workspace = crud.workspace.get(db=db, id=5)
-    workspace.workspace_uuid = workspace.workspace_uuid.strip().decode('ascii')
     return workspace
-    return {"msg": "Hello, World!"}
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.WorkspaceOut)
@@ -45,10 +38,10 @@ def update_workspace(
     workspace_in: schemas.WorkspaceUpdate,
     db: Session = Depends(deps.get_db)
 ) -> models.Workspace:
-    """
-    Root Get
-    """
+
     db_obj = crud.workspace.get_by_uuid(db=db, uuid=workspace_uuid)
+    if not db_obj:
+        raise exceptions.WorkspaceNotFoundException
     workspace = crud.workspace.update(db=db, db_obj=db_obj, obj_in=workspace_in)
 
     return workspace
@@ -59,9 +52,8 @@ def get_one_workspace(
     workspace_uuid: str, 
     db: Session = Depends(deps.get_db)
 ) -> models.Workspace:
-    """
-    Root Get
-    """
+
     workspace = crud.workspace.get_by_uuid(db=db, uuid=workspace_uuid)
     
     return workspace
+
