@@ -7,3 +7,8 @@ class MissingWorkspaceHeaderException(base.UnauthorizedException):
 class WorkspaceNotFoundException(base.UnauthorizedException):
     def __init__(self) -> None:
         self.detail = "Workspace not found"
+
+class InactiveWorkspace(base.AcceptedException):
+    """Inactive Workspace"""
+    def __init__(self) -> None:
+        self.detail = "Inactive Workspace"

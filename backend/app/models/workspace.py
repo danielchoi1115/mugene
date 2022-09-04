@@ -20,3 +20,4 @@ class Workspace(Base):
     
     workspace_name = Column(VARCHAR(50), nullable=False)
     date_created = Column(TIMESTAMP, nullable=False)
+    is_active = Column(TINYINT(unsigned=True), nullable=False)

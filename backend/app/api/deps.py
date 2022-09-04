@@ -8,7 +8,6 @@ from app import exceptions
 from app.db.init_client import client
 from app.core.auth import oauth2_scheme
 from app.core.config import settings
-from app.crud.projections.user import UserFullProjection
 from app.exceptions import CredentialException
 from app import models
 from app.db import session
@@ -74,4 +73,6 @@ async def get_current_workspace(
 
     if workspace is None:
         raise exceptions.WorkspaceNotFoundException
+    if workspace.is_active == 0:
+        raise exceptions.InactiveWorkspace
     return workspace

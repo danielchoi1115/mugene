@@ -16,6 +16,7 @@ class CRUDWorkspace(CRUDBase[models.Workspace, schemas.WorkspaceCreate, schemas.
         db_obj.creator_uuid = user_in.user_uuid
         db_obj.owner_uuid = user_in.user_uuid
         db_obj.date_created = datetime.utcnow()
+        db_obj.is_active = 1
         db.add(db_obj)
         db.commit()
         return db_obj 
