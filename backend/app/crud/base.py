@@ -23,6 +23,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
+    
     def get_by_uuid(self, db: Session, uuid: Any) -> Optional[ModelType]:
         if type(uuid) == str:
             uuid = uuid.encode()
@@ -61,12 +62,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
 
-    def remove(self, db: Session, *, id: int) -> ModelType:
+    def delete(self, db: Session, *, id: int) -> ModelType:
         obj = db.query(self.model).get(id)
         db.delete(obj)
         db.commit()
         return obj
-    
+    def delete_by_uuid(self, db: Session, *, uuid: str) -> ModelType:
+        obj = self.get_by_uuid(db=db, uuid=uuid)
+        db.delete(obj)
+        db.commit()
+        return obj
     def check_if_null(self, value: Any) -> bool:
         if str(value) in ['none', 'null', '0']:
             return True
