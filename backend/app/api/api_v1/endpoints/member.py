@@ -10,6 +10,7 @@ router = APIRouter()
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.MemberOut)
 def create_member(
     member_in: schemas.MemberCreate,
+    workspace_in: models.Workspace = Depends(deps.get_current_workspace),
     db: Session = Depends(deps.get_db)
 ) -> models.Member:
     """
@@ -38,4 +39,14 @@ def update_member(
 ) -> models.Member:
     
     member = crud.member.get_by_uuid(db=db, uuid=member_uuid)
+    return member
+
+
+@router.delete("/{member_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.MemberOut)
+def delete_member(
+    member_uuid: str,
+    db: Session = Depends(deps.get_db)
+) -> models.Member:
+    
+    member = crud.member.delete_by_uuid(db=db, uuid=member_uuid)
     return member

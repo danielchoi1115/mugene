@@ -2,9 +2,6 @@ from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, status
 from app import crud, exceptions, schemas
-from app.api.api_v1.endpoints.workspace import get_workspace
-from app.schemas.dbref import RefWorkspace
-
 from app.api import deps
 from sqlalchemy.orm import Session
 from app.crud.crud_workspace import CRUDWorkspace
@@ -32,6 +29,16 @@ def update_report(
 
     return report
 
+@router.delete("/{report_uuid}", status_code=status.HTTP_200_OK, response_model=schemas.ReportOut)
+def delete_report(
+    report_uuid: str,
+    db: Session = Depends(deps.get_db)
+) -> models.Report:
+    
+    report = crud.report.delete_by_uuid(db=db, uuid=report_uuid)
+
+    return report
+
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ReportOut)
 def create_report(
@@ -41,9 +48,7 @@ def create_report(
     user: models.User = Depends(deps.get_current_user),
     workspace: models.Workspace = Depends(deps.get_current_workspace),
 ) -> models.Report:
-    """
-    Root Get
-    """
+
     reportdata = crud.reportdata.create(db=db, obj_in=reportdata_in)
     
     report = crud.report.create(
