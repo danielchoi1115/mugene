@@ -34,6 +34,7 @@ def authenticate(
 
 
 def create_access_token(*, sub: str) -> str:  # 2
+    # create access token
     return _create_token(
         token_type="access_token",
         lifetime=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),  # 3
@@ -42,6 +43,7 @@ def create_access_token(*, sub: str) -> str:  # 2
 
 
 def create_refresh_token(*, sub: str) -> str:  # 2
+    # create refresh token
     return _create_token(
         token_type="refresh_token",
         lifetime=timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),  # 3
@@ -54,6 +56,7 @@ def _create_token(
     lifetime: timedelta,
     sub: str,
 ) -> str:
+    # set payloads and return jwt token
     payload = {}
     expire = datetime.utcnow() + lifetime
     payload["type"] = token_type

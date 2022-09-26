@@ -25,6 +25,7 @@ class TokenData(BaseModel):
 #         session.end_session()
 
 def get_db() -> Generator:
+    # get generator 
     try:
         db = session.SessionLocal()
         yield db
@@ -35,7 +36,7 @@ async def get_current_user(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
 ) -> models.User | None:
-
+    # fetch user data from token
     try:
         payload = jwt.decode(
             token,
@@ -68,6 +69,7 @@ async def get_current_workspace(
     db: Session = Depends(get_db),
     # uuid: str = Depends(workspace_scheme)
 ) -> models.Workspace | None:
+    # fetch workspace data from token
     uuid = b'FUj776jLTQSUb78VtJHK8A'
     workspace = crud.workspace.get_by_uuid(db, uuid)
 
