@@ -14,8 +14,16 @@ def create_tokens(
     db: Session = Depends(deps.get_db),
     form_data: OAuth2PasswordRequestForm = Depends()
 ) -> dict:
-    """
-    Root Get
+    """_summary_
+
+    Args:
+        -
+
+    Raises:
+        exceptions.user.IncorrectLoginException: When login data is wrong
+
+    Returns:
+        dict: contains access token, refresh token, and token type
     """
     user = core.auth.authenticate(
         db=db,

@@ -22,9 +22,16 @@ def get_many_files(
     db: Session = Depends(deps.get_db),
     workspace: models.Workspace = Depends(deps.get_current_workspace)
 ) -> List[models.File]:
-    # validateStorage()
-    # validateFile()
-    
+    """ get many files
+
+    Args:
+        parent_file_id (int | str, optional): parent file id. Defaults to None.
+        skip (int, optional): start index. Defaults to 0.
+        limit (int, optional): return limit. Defaults to 100.
+
+    Returns:
+        List[models.File]: List of file models
+    """
     read_result = crud.file.get_multi(
         workspace_id=workspace.workspace_id,
         parent_file_id=parent_file_id,
@@ -44,8 +51,17 @@ async def create_file(
     user_in: models.User = Depends(deps.get_current_user),
     workspace_in: models.Workspace = Depends(deps.get_current_workspace)
 ) -> models.File:
-    """
-    Post File
+    """_summary_
+
+    Args:
+        filedata (UploadFile, optional): uploaded file. Defaults to File(None).
+
+    Raises:
+        exceptions.UploadException: If filedata exists
+        exceptions.NullFileException: _description_
+
+    Returns:
+        models.File: _description_
     """
     if filedata and file_in.is_dir:
         raise exceptions.UploadException

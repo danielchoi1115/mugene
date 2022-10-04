@@ -13,8 +13,13 @@ def create_member(
     workspace_in: models.Workspace = Depends(deps.get_current_workspace),
     db: Session = Depends(deps.get_db)
 ) -> models.Member:
-    """
-    Root Get
+    """Create member API
+
+    Args:
+        member_in (schemas.MemberCreate): Member data
+
+    Returns:
+        models.Member: returns member model
     """
     member = crud.member.create(db=db, obj_in=member_in)
 
