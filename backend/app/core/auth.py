@@ -25,6 +25,15 @@ def authenticate(
     email: EmailStr,
     password: str
 ) -> Optional[schemas.UserInDB]:
+    """Method to check email existance and verify password
+
+    Args:
+        email (EmailStr): user email
+        password (str): password
+
+    Returns:
+        User object or None
+    """
     user: models.User = crud.user.get_by_email(db=db, email=email)
     if not user:
         return None
@@ -34,7 +43,14 @@ def authenticate(
 
 
 def create_access_token(*, sub: str) -> str:  # 2
-    # create access token
+    """Creates user access token with email
+
+    Args:
+        sub (str): user email
+
+    Returns:
+        str: access token string
+    """
     return _create_token(
         token_type="access_token",
         lifetime=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),  # 3
@@ -43,7 +59,14 @@ def create_access_token(*, sub: str) -> str:  # 2
 
 
 def create_refresh_token(*, sub: str) -> str:  # 2
-    # create refresh token
+    """Creates user refresh token with email
+
+    Args:
+        sub (str): user email
+
+    Returns:
+        str: refresh token string
+    """
     return _create_token(
         token_type="refresh_token",
         lifetime=timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),  # 3
@@ -56,7 +79,16 @@ def _create_token(
     lifetime: timedelta,
     sub: str,
 ) -> str:
-    # set payloads and return jwt token
+    """_summary_
+
+    Args:
+        token_type (str): token type -> `access_token` or `refresh_token`
+        lifetime (timedelta): token lifetime
+        sub (str): data
+
+    Returns:
+        str: returns token
+    """
     payload = {}
     expire = datetime.utcnow() + lifetime
     payload["type"] = token_type
