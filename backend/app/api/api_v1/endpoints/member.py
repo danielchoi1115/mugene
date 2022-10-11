@@ -32,6 +32,15 @@ def update_member(
     member_in: schemas.MemberUpdate,
     db: Session = Depends(deps.get_db)
 ) -> models.Member:
+    """Update member data
+
+    Args:
+        member_uuid (str): adds member uuid
+        member_in (schemas.MemberUpdate): member data to update
+
+    Returns:
+        models.Member: returns member object
+    """
     member_obj = crud.member.get_by_uuid(db=db, uuid=member_uuid)
     member = crud.member.update(db=db, db_obj=member_obj, obj_in=member_in)
 
