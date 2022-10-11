@@ -82,7 +82,14 @@ def get_file(
     file_uuid: str,
     db: Session = Depends(deps.get_db)
 ) -> models.File:
-    
+    """get file based on file uuid
+
+    Args:
+        file_uuid (str): file uuid
+
+    Returns:
+        models.File: returns file object
+    """
     file = crud.file.get_by_uuid(db=db, uuid=file_uuid)
     
     return file
@@ -92,7 +99,14 @@ def delete_file(
     file_uuid: str,
     db: Session = Depends(deps.get_db)
 ) -> models.File:
-    
+    """Deletes file based on uuid
+
+    Args:
+        file_uuid (str): file uuid
+
+    Returns:
+        models.File: returns file object that was deleted
+    """
     read_result = crud.file.delete_by_uuid(db=db, uuid=file_uuid)
     
     return read_result
