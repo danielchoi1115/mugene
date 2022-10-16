@@ -1,7 +1,5 @@
-from datetime import datetime
-from typing import List
 from fastapi import APIRouter, Depends, status
-from app import crud, exceptions, schemas
+from app import crud, schemas
 from app.api import deps
 from sqlalchemy.orm import Session
 from app import models

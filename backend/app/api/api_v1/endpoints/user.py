@@ -1,7 +1,5 @@
 
-from typing import List
 from fastapi import APIRouter, Depends, status
-from app.schemas.response import InsertResponse, InsertResponseError
 from app.schemas.user import UserCreate
 from app import schemas
 from app import exceptions

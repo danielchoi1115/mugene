@@ -1,11 +1,9 @@
 from typing import Generator, Optional
-from pymongo.client_session import ClientSession
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, Request
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from app import crud
 from app import exceptions
-from app.db.init_client import client
 from app.core.auth import oauth2_scheme
 from app.core.config import settings
 from app.exceptions import CredentialException
