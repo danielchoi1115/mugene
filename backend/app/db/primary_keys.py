@@ -1,7 +1,4 @@
 
-from typing import Literal
-
-
 class PKey:
     @property
     def files_id(self):
