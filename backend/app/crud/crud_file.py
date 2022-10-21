@@ -82,6 +82,11 @@ class CRUDFile(CRUDBase[models.File, FileCreate, FileUpdate]):
 
         return db_obj
     
+    def check_if_null(self, value) -> bool:
+        if str(value) in ['none', 'null', '0']:
+            return True
+        return False
+    
     def get_multi(
         self, 
         db: Session, 

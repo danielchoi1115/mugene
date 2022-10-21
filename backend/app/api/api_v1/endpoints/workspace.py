@@ -1,5 +1,3 @@
-from datetime import datetime
-from typing import List
 from fastapi import APIRouter, Depends, status
 from app import crud, exceptions, schemas, models
 from app.api import deps
