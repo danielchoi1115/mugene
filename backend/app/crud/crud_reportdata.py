@@ -1,8 +1,5 @@
-from datetime import datetime
-from typing import Any, Dict, List, Optional
 from app import schemas
 from app.crud.base import CRUDBase
-from app.db.init_client import client
 
 from app import models
 from sqlalchemy.orm import Session
