@@ -4,12 +4,11 @@ from jose import jwt, JWTError
 from pydantic import BaseModel
 from app import crud
 from app import exceptions
-from app.core.auth import oauth2_scheme
-from app.core.config import settings
 from app import models
 from app.db import session
 from sqlalchemy.orm import Session
 from fastapi.security.utils import get_authorization_scheme_param
+from app import core
 class TokenData(BaseModel):
     username: Optional[str] = None
 
@@ -25,9 +24,11 @@ def get_db() -> Generator:
     finally:
         db.close()
 
+
 async def get_current_user(
     db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
+    token: str = Depends(core.oauth2_scheme),
+    settings: core.Settings = Depends(core.get_settings)
 ) -> models.User | None:
     """ Fetch user data from database
 

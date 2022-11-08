@@ -1,48 +1,33 @@
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, Depends
 import time
 from app.api.api_v1 import api
-from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.middleware import BaseMiddleware
-app = FastAPI(
-    title="MuGene API", openapi_url="/openapi.json"
-)
+from app.core import get_settings, Settings
 
-root_router = APIRouter()
-
-app.include_router(api.api_router, prefix=settings.API_V1_STR)  # <----- API versioning
-app.include_router(root_router)
-if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
-        allow_origin_regex=settings.BACKEND_CORS_ORIGIN_REGEX,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+def get_application(settings: Settings = get_settings()) -> FastAPI:
+    app = FastAPI(
+        title="MuGene API", openapi_url="/openapi.json"
     )
-# @app.middleware("http")
-# async def add_process_time_header(request: Request, call_next):
-#         try:
-#             start_time = time.time()
-#             response = await call_next(request)
+    root_router = APIRouter()
 
-#         # except InvalidId as ex:
-#         #     response = JSONResponse(
-#         #         content=jsonable_encoder({
-#         #             "result": "failed",
-#         #             "error": str(ex)
-#         #         }),
-#         #         status_code=400
-#         #     )
-#         except Exception as ex:
-#             print(ex)
-#         finally:
-#             process_time = time.time() - start_time
-#             response.headers["X-Process-Time"] = str(process_time)
-#             return response
+    app.include_router(api.api_router, prefix=settings.API_V1_STR)
+    app.include_router(root_router)
+    
+    if settings.BACKEND_CORS_ORIGINS:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+            allow_origin_regex=settings.BACKEND_CORS_ORIGIN_REGEX,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+    
+    return app
 
+app = get_application()
 
 if __name__ == "__main__":
     # Use this for debugging purposes only
