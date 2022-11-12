@@ -27,7 +27,7 @@ def get_db() -> Generator:
 
 async def get_current_user(
     db: Session = Depends(get_db),
-    token: str = Depends(core.oauth2_scheme),
+    token: str = Depends(core.oauth2_scheme()),
     settings: core.Settings = Depends(core.get_settings)
 ) -> models.User | None:
     """ Fetch user data from database
